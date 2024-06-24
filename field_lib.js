@@ -1,3 +1,4 @@
+var score_rules = {"move": 0, "pop_shield": 50, "box_fall": 200, "bonus_1": 400, "bonus_2": 500, "bonus_3": 700, "ruby_get": 1000, "ruby_fall": -1000, "ruby_break": 3000}; // bonus_1 - for 4 connected, removes available 3x3; bonus_2 - for 5 connected, removes available row and column; bonus_3 - for 3000+ score - shuffle field; ruby - for 6-7 connected, like a box can fall and can destroy like a gems; ruby has -1 number;
 function get_empty_field(n, m, gems_number = 4, shield_number = 0, boxes_number = 1, boxes_random = 5) {
     var field = [];
     var shield = [];
@@ -9,11 +10,11 @@ function get_empty_field(n, m, gems_number = 4, shield_number = 0, boxes_number 
             shield[i].push(shield_number);
         }
     }
-    return JSON.stringify({"gems_field": field, "shield_field": shield, "n": n, "m": m, "gems_number": gems_number, "shield_number": shield_number, "boxes_number": boxes_number, "boxes_random": boxes_random});
+    return {"gems_field": field, "shield_field": shield, "n": n, "m": m, "gems_number": gems_number, "shield_number": shield_number, "boxes_number": boxes_number, "boxes_random": boxes_random};
 }
 
 function check_field_is_possible(field) {
-    field = JSON.parse(field);
+    field = JSON.parse(JSON.stringify(field));
     var possible_field = [];
     for (var i = 0; i < field["n"]; ++i) {
         possible_field.push([]);
@@ -50,7 +51,7 @@ function check_field_is_possible(field) {
 }
 
 function run_field(field) {
-    field = JSON.parse(field);
+    field = JSON.parse(JSON.stringify(field));
     for (var i = 0; i < field["n"]; ++i) {
         for (var j = 0; j < field["m"]; ++j) {
             if (field["gems_field"][i][j] == "gem") {
@@ -61,12 +62,12 @@ function run_field(field) {
         }
     }
     field["score"] = 0;
-    return JSON.stringify(field);
+    return field;
 }
 
 const _dmove = [[0, 1], [1, 0], [0, -1], [-1, 0]];
 function _count_triple_field(field) {
-    field = JSON.parse(field);
+    field = JSON.parse(JSON.stringify(field));
     var to_delete_field = [];
     for (var i = 0; i < field["n"]; ++i) {
         to_delete_field.push([]);
@@ -98,7 +99,7 @@ function _count_triple_field(field) {
         }
     }
     if (triple_flag == 1) {
-        return JSON.stringify({"triple_flag": triple_flag, "field": to_delete_field});
+        return {"triple_flag": triple_flag, "field": to_delete_field};
     } else {
         for (var i = 0; i < field["n"]; ++i) {
             for (var j = 0; j < field["m"]; ++j) {
@@ -113,7 +114,7 @@ function _count_triple_field(field) {
                                     0 <= j + _dmove[k][1] * 2 + _dmove[k2][1] && j + _dmove[k][1] * 2 + _dmove[k2][1] < field["m"] &&
                                     field["gems_field"][i][j] == field["gems_field"][i + _dmove[k][0] * 2 + _dmove[k2][0]][j + _dmove[k][1] * 2 + _dmove[k2][1]]) {
                                     triple_flag = 0;
-                                    return JSON.stringify({"triple_flag": triple_flag});
+                                    return {"triple_flag": triple_flag};
                                 }
                             }
                         }
@@ -134,7 +135,7 @@ function _count_triple_field(field) {
                                     0 <= j + _dmove[k][1] + _dmove[k2][1] && j + _dmove[k][1] + _dmove[k2][1] < field['m'] &&
                                     field["gems_field"][i][j] == field["gems_field"][i + _dmove[k][0] + _dmove[k2][0]][j + _dmove[k][1] + _dmove[k2][1]]) {
                                     triple_flag = 0;
-                                    return JSON.stringify({"triple_flag": triple_flag});
+                                    return {"triple_flag": triple_flag};
                                 }
                             }
                         }
@@ -143,54 +144,50 @@ function _count_triple_field(field) {
             }
         }
         triple_flag = -1;
-        return JSON.stringify({"triple_flag": triple_flag});
+        return {"triple_flag": triple_flag};
     }
 }
 
 function update_field_from_impossible_to_playable(field, tryies = -1) {
-    field = JSON.parse(field);
+    field = JSON.parse(JSON.stringify(field));
     for (var t = 0; t < tryies || tryies == -1; ++t) {
         for (var i = 0; i < field["n"]; ++i) {
             for (var j = 0; j < field["m"]; ++j) {
-                if (typeof(field["gems_field"][i][j]) == "number" || field["gems_field"][i][j] == "gem") {
+                if ((typeof(field["gems_field"][i][j]) == "number" || field["gems_field"][i][j] == "gem") && field["gems_field"][i][j] != -1) {
                     field["gems_field"][i][j] = Math.floor(Math.random() * field["gems_number"]) % field["gems_number"];
                 }
             }
         }
-        var is_good = JSON.parse(_count_triple_field(JSON.stringify(field)))["triple_flag"];
+        var is_good = _count_triple_field(field)["triple_flag"];
         if (is_good == 0) {
-            return JSON.stringify(field);
+            return field;
         }
     }
-    return JSON.stringify(field);
+    return field;
 }
 
 function recount_field(field) {
-    field = JSON.parse(field);
+    field = JSON.parse(JSON.stringify(field));
     var move_list = [];
+    var score_add = [];
     for (var j = 0; j < field["m"]; ++j) {
-        if (field["shield_field"][0][j] == "box") {
+        if (field["gems_field"][0][j] == "box") {
             move_list.push([[0, j], [-1, j]]);
             field["gems_field"][0][j] = "removed";
+            field["score"] += score_rules["box_fall"];
+            score_add.push([0, j, score_rules["box_fall"]]);
+        } else if (field["gems_field"][0][j] == -1) {
+            move_list.push([[0, j], [-1, j]]);
+            field["gems_field"][0][j] = "removed";
+            field["score"] += score_rules["ruby_fall"];
+            score_add.push([0, j, score_rules["ruby_fall"]]);
         }
     }
-    var ct = JSON.parse(_count_triple_field(JSON.stringify(field)));
-    if (ct["triple_flag"] == 1) {
-        for (var i = 0; i < field["n"]; ++i) {
-            for (var j = 0; j < field["m"]; ++j) {
-                if (ct["field"][i][j]) {
-                    move_list.push([[i, j], [-1, j]]);
-                    field["gems_field"][i][j] = "removed";
-                    if (field["shield_field"][i][j] > 0) {
-                        field["shield_field"][i][j] -= 1;
-                    }
-                }
-            }
-        }
+    if (move_list.length > 0) {
         for (var j = 0; j < field["m"]; ++j) {
             var last_not_empty = [];
             for (var i = 0; i < field["n"]; ++i) {
-                if (typeof(field["gems_field"][i][j]) == "number") {
+                if (field["gems_field"][i][j] != "empty" && field["gems_field"][i][j] != "removed") {
                     if (last_not_empty.length != 0) {
                         move_list.push([[i, j], [last_not_empty[0], j]]);
                         field["gems_field"][last_not_empty[0]][j] = field["gems_field"][i][j];
@@ -211,35 +208,124 @@ function recount_field(field) {
                 }
             }
         }
-        return JSON.stringify({"triple_flag": ct["triple_flag"], "field": field, "move_list": move_list});
+        return {"triple_flag": 1, "field": field, "move_list": move_list, "score_add": score_add};
     }
-    return JSON.stringify({"triple_flag": ct["triple_flag"], "field": field});
+    var ct = _count_triple_field(field);
+    if (ct["triple_flag"] == 1) {
+        var stack = [];
+        var setfit = JSON.parse(JSON.stringify(ct["field"]));
+        for (var i = 0; i < field["n"]; ++i) {
+            for (var j = 0; j < field["m"]; ++j) {
+                if (setfit[i][j] == 1) {
+                    stack.push([i, j]);
+                    var cnt = 1;
+                    while (stack.length > 0) {
+                        var pos = stack.shift();
+                        setfit[pos[0]][pos[1]] = 0;
+                        for (var k = 0; k < 4; ++k) {
+                            if (0 <= pos[0] + _dmove[k][0] && pos[0] + _dmove[k][0] < field["n"] &&
+                            0 <= pos[1] + _dmove[k][1] && pos[1] + _dmove[k][1] < field["m"] && setfit[pos[0] + _dmove[k][0]][pos[1] + _dmove[k][1]] == 1) {
+                                stack.push([pos[0] + _dmove[k][0], pos[1] + _dmove[k][1]]);
+                                cnt += 1;
+                            }
+                        }
+                    }
+                    setfit[i][j] = -cnt;
+                }
+            }
+        }
+        for (var i = 0; i < field["n"]; ++i) {
+            for (var j = 0; j < field["m"]; ++j) {
+                if (ct["field"][i][j]) {
+                    move_list.push([[i, j], [-1, j]]);
+                    if (field["gems_field"][i][j] == -1) {
+                        field["score"] += score_rules["ruby_break"];
+                        score_add.push([i, j, score_rules["ruby_break"]]);
+                    }
+                    field["gems_field"][i][j] = "removed";
+                    if (field["shield_field"][i][j] > 0) {
+                        field["score"] += score_rules["pop_shield"];
+                        score_add.push([i, j, score_rules["pop_shield"]]);
+                        field["shield_field"][i][j] -= 1;
+                    }
+                }
+                if (setfit[i][j] == -4) {
+                    move_list.push([[-1, -1], [i, j]]);
+                    field["gems_field"][i][j] = "bonus_1";
+                } else if (setfit[i][j] == -5) {
+                    move_list.push([[-1, -1], [i, j]]);
+                    field["gems_field"][i][j] = "bonus_2";
+                } else if (setfit[i][j] <= -6) {
+                    move_list.push([[-1, -1], [i, j]]);
+                    field["gems_field"][i][j] = -1;
+                    field["score"] += score_rules["ruby_get"];
+                    score_add.push([i, j, score_rules["ruby_get"]]);
+                } else if (ct["field"][i][j] && field["was_bonus_3"] == undefined) {
+                    move_list.push([[-1, -1], [i, j]]);
+                    field["gems_field"][i][j] = "bonus_3";
+                }
+            }
+        }
+        for (var j = 0; j < field["m"]; ++j) {
+            var last_not_empty = [];
+            for (var i = 0; i < field["n"]; ++i) {
+                if (field["gems_field"][i][j] != "empty" && field["gems_field"][i][j] != "removed") {
+                    if (last_not_empty.length != 0) {
+                        move_list.push([[i, j], [last_not_empty[0], j]]);
+                        field["gems_field"][last_not_empty[0]][j] = field["gems_field"][i][j];
+                        last_not_empty.push(i);
+                        last_not_empty.shift();
+                    }
+                } else if (field["gems_field"][i][j] == "removed") {
+                    last_not_empty.push(i);
+                }
+            }
+            for (var i = 0; i < last_not_empty.length; ++i) {
+                move_list.push([[-1, j], [last_not_empty[i], j]]);
+                if (Math.random() * field["boxes_random"] < 1 && field["boxes_number"] > 0) {
+                    field["gems_field"][last_not_empty[i]][j] = "box";
+                    --field["boxes_number"];
+                } else {
+                    field["gems_field"][last_not_empty[i]][j] = Math.floor(Math.random() * field["gems_number"]) % field["gems_number"];
+                }
+            }
+        }
+        return {"triple_flag": ct["triple_flag"], "field": field, "move_list": move_list, "score_add": score_add};
+    }
+    return {"triple_flag": ct["triple_flag"], "field": field};
 }
 
 function swap_two_elems_on_field(field, pos1, pos2) {
-    field = JSON.parse(field);
+    field = JSON.parse(JSON.stringify(field));
     var move_list = [];
-    if (typeof(field["gems_field"][pos1[0]][pos1[1]]) == "number" && typeof(field["gems_field"][pos2[0]][pos2[1]]) == "number" && Math.abs(pos1[0] - pos2[0]) + Math.abs(pos1[1] - pos2[1]) == 1) {
-        field["gems_field"][pos1[0]][pos1[1]] += field["gems_field"][pos2[0]][pos2[1]];
-        field["gems_field"][pos2[0]][pos2[1]] = field["gems_field"][pos1[0]][pos1[1]] - field["gems_field"][pos2[0]][pos2[1]];
-        field["gems_field"][pos1[0]][pos1[1]] = field["gems_field"][pos1[0]][pos1[1]] - field["gems_field"][pos2[0]][pos2[1]];
-        var is_good = JSON.parse(_count_triple_field(JSON.stringify(field)))["triple_flag"];
-        if (is_good == 1) {
-            return JSON.stringify({"good": true, "field": field});
-        } else {
+    if ((typeof(field["gems_field"][pos1[0]][pos1[1]]) == "number" || typeof(field["gems_field"][pos2[0]][pos2[1]]) == "number") && Math.abs(pos1[0] - pos2[0]) + Math.abs(pos1[1] - pos2[1]) == 1) {
+        if (typeof(field["gems_field"][pos1[0]][pos1[1]]) == "number" && typeof(field["gems_field"][pos2[0]][pos2[1]]) == "number") {
             field["gems_field"][pos1[0]][pos1[1]] += field["gems_field"][pos2[0]][pos2[1]];
             field["gems_field"][pos2[0]][pos2[1]] = field["gems_field"][pos1[0]][pos1[1]] - field["gems_field"][pos2[0]][pos2[1]];
             field["gems_field"][pos1[0]][pos1[1]] = field["gems_field"][pos1[0]][pos1[1]] - field["gems_field"][pos2[0]][pos2[1]];
-            return JSON.stringify({"good": false, "field": field});
+            var is_good = _count_triple_field(field)["triple_flag"];
+            if (is_good == 1) {
+                field["score"] += score_rules["move"];
+                return {"good": true, "field": field};
+            } else {
+                field["gems_field"][pos1[0]][pos1[1]] += field["gems_field"][pos2[0]][pos2[1]];
+                field["gems_field"][pos2[0]][pos2[1]] = field["gems_field"][pos1[0]][pos1[1]] - field["gems_field"][pos2[0]][pos2[1]];
+                field["gems_field"][pos1[0]][pos1[1]] = field["gems_field"][pos1[0]][pos1[1]] - field["gems_field"][pos2[0]][pos2[1]];
+                return {"good": false, "field": field};
+            }
+        } else if (field["gems_field"][pos1[0]][pos1[1]] == "bonus_1") {
+            // need to write bonuses_realises
         }
     } else {
-        return JSON.stringify({"good": false, "field": field});
+        return {"good": false, "field": field};
     }
 }
 
-a = get_empty_field(3, 3);
-console.log(check_field_is_possible(a));
-console.log(a);
-a = run_field(a);
-console.log(a);
-console.log(recount_field(a));
+/*
+Игра сначала должна либо создать новое поле, либо использовать доработанное, созданное на основе нового
+Затем проверить на возможность игры
+Затем запустить через run
+Затем надо анимировать каждый пересчет recount_field
+как только он станет 0, то надо ждать хода swap_two_elems
+Как только он станет -1, то надо переделать карту
+*/
