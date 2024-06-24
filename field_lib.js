@@ -1,4 +1,4 @@
-var score_rules = {"move": 0, "pop_shield": 50, "stone_fall": 200, "bomb_fall": 300, "bomb_boom": -2100, "bonus_1": 400, "bonus_2": 700, "bonus_3": 1200, "ruby_get": 1000, "ruby_fall": -1000, "ruby_break": 3000}; // bonus_1 - for 4 connected, removes available 3x3; bonus_2 - for 5 connected, removes available row and column; bonus_3 - for 3000+ score - moves some cells with gems to stones; ruby - for 6-7 connected, like a stone can fall and can destroy like a gems; ruby has -1 number;
+var score_rules = {"move": 0, "pop_shield": 20, "stone_fall": 200, "bomb_fall": 300, "bomb_boom": -2100, "bonus_1": 400, "bonus_2": 700, "bonus_3": 1200, "ruby_get": 1000, "ruby_fall": -1000, "ruby_break": 3000}; // bonus_1 - for 4 connected, removes available 3x3; bonus_2 - for 5 connected, removes available row and column; bonus_3 - for 3000+ score - removes some cells with gems; ruby - for 6-7 connected, like a stone can fall and can destroy like a gems; ruby has -1 number;
 function get_empty_field(n, m, gems_number = 4, shield_number = 0, stones_number = 1, stones_random = 5, has_bombs = true) {
     var field = [];
     var shield = [];
@@ -316,7 +316,7 @@ function recount_field(field) {
         }
         return {"triple_flag": ct["triple_flag"], "field": field, "move_list": move_list, "score_add": score_add};
     }
-    return {"triple_flag": ct["triple_flag"], "field": field};
+    return {"triple_flag": ct["triple_flag"], "field": field, "help_move": ct["help_move"]};
 }
 
 function swap_two_elems_on_field(field, pos1, pos2) {
@@ -346,9 +346,9 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                 pos2[1] = pos1[1] - pos2[1];
                 pos1[1] = pos1[1] - pos2[1];
             }
-            field["gems_field"][pos1[0]][pos1[1]] += field["gems_field"][pos2[0]][pos2[1]];
-            field["gems_field"][pos2[0]][pos2[1]] = field["gems_field"][pos1[0]][pos1[1]] - field["gems_field"][pos2[0]][pos2[1]];
-            field["gems_field"][pos1[0]][pos1[1]] = field["gems_field"][pos1[0]][pos1[1]] - field["gems_field"][pos2[0]][pos2[1]];
+            var x = field["gems_field"][pos2[0]][pos2[1]];
+            field["gems_field"][pos2[0]][pos2[1]] = field["gems_field"][pos1[0]][pos1[1]];
+            field["gems_field"][pos1[0]][pos1[1]] = x;
             if (field["gems_field"][pos1[0]][pos1[1]] == "bonus_1") {
                 for (var i = -1; i <= 1; ++i) {
                     for (var j = -1; j <= 1; ++j) {
@@ -356,26 +356,33 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                         0 <= pos1[1] + j && pos1[1] + j < field["m"]) {
                             if (typeof(field["gems_field"][pos1[0] + i][pos1[1] + j]) == "number" && field["gems_field"][pos1[0] + i][pos1[1] + j] != -1) {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == -1) {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["ruby_fall"];
-                                score_add.push([pos1[0] + i, pos1[1] + j, score_rules["ruby_fall"]]);
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == "bomb") {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["bomb_boom"];
-                                score_add.push([pos1[0] + i, pos1[1] + j, score_rules["bomb_boom"]]);
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == "bonus_1") {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["bonus_1"];
-                                score_add.push([pos1[0] + i, pos1[1] + j, score_rules["bonus_1"]]);
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == "bonus_2") {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["bonus_2"];
-                                score_add.push([pos1[0] + i, pos1[1] + j, score_rules["bonus_2"]]);
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == "bonus_3") {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["bonus_3"];
-                                score_add.push([pos1[0] + i, pos1[1] + j, score_rules["bonus_3"]]);
                             }
                         }
                     }
@@ -384,7 +391,8 @@ function swap_two_elems_on_field(field, pos1, pos2) {
             } else if (field["gems_field"][pos1[0]][pos1[1]] == "bonus_2") {
                 field["gems_field"][pos1[0]][pos1[1]] = "removed";
                 field["score"] += score_rules["bonus_2"];
-                score_add.push([pos1[0], pos1[1], score_rules["bonus_2"]]);
+                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0]][pos1[1]];
+                field["shield_field"][pos1[0]][pos1[1]] = 0;
                 for (var k2 = 0; k2 < 4; ++k2) {
                     for (var k = 1; k <= Math.max(field["n"], field["m"]); ++k) {
                         var i = _dmove[k2][0] * k;
@@ -393,24 +401,36 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                         0 <= pos1[1] + j && pos1[1] + j < field["m"]) {
                             if (typeof(field["gems_field"][pos1[0] + i][pos1[1] + j]) == "number" && field["gems_field"][pos1[0] + i][pos1[1] + j] != -1) {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == -1) {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["ruby_fall"];
                                 score_add.push([pos1[0] + i, pos1[1] + j, score_rules["ruby_fall"]]);
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == "bomb") {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["bomb_boom"];
                                 score_add.push([pos1[0] + i, pos1[1] + j, score_rules["bomb_boom"]]);
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == "bonus_1") {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["bonus_1"];
                                 score_add.push([pos1[0] + i, pos1[1] + j, score_rules["bonus_1"]]);
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == "bonus_2") {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["bonus_2"];
                                 score_add.push([pos1[0] + i, pos1[1] + j, score_rules["bonus_2"]]);
                             } else if (field["gems_field"][pos1[0] + i][pos1[1] + j] == "bonus_3") {
                                 field["gems_field"][pos1[0] + i][pos1[1] + j] = "removed";
+                                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0] + i][pos1[1] + j];
+                                field["shield_field"][pos1[0] + i][pos1[1] + j] = 0;
                                 field["score"] += score_rules["bonus_3"];
                                 score_add.push([pos1[0] + i, pos1[1] + j, score_rules["bonus_3"]]);
                             } else {
@@ -425,10 +445,16 @@ function swap_two_elems_on_field(field, pos1, pos2) {
             } else if (field["gems_field"][pos1[0]][pos1[1]] == "bonus_3") {
                 field["gems_field"][pos1[0]][pos1[1]] = "removed";
                 field["score"] += score_rules["bonus_3"];
+                field["score"] += score_rules["pop_shield"] * field["shield_field"][pos1[0]][pos1[1]];
+                field["shield_field"][pos1[0]][pos1[1]] = 0;
                 for (var i = 0; i < field["n"]; ++i) {
                     for (var j = 0; j < field["m"]; ++j) {
-                        if (typeof(field["gems_field"][i][j]) == "number" && field["gems_field"][i][j] != -1 && Math.random() * 10 < 1) {
-                            field["gems_field"][i][j] = "stone";
+                        if (typeof(field["gems_field"][i][j]) == "number" && field["gems_field"][i][j] != -1 && Math.random() * 4 < 1) {
+                            field["gems_field"][i][j] = "removed";
+                            if (field["shield_field"][i][j] > 0) {
+                                field["score"] += score_rules["pop_shield"];
+                                field["shield_field"][i][j] -= 1;
+                            }
                         }
                     }
                 }

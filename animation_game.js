@@ -1,1 +1,0 @@
-console.log(JSON.stringify(get_empty_field(4, 4)));
