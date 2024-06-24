@@ -401,7 +401,7 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                         }
                     }
                 }
-                return {"good": true, "field": field};
+                return {"good": true, "field": field, "score_add": score_add};
             } else if (field["gems_field"][pos1[0]][pos1[1]] == "bonus_2") {
                 field["gems_field"][pos1[0]][pos1[1]] = "removed";
                 field["score"] += score_rules["bonus_2"];
@@ -462,7 +462,7 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                         }
                     }
                 }
-                return {"good": true, "field": field};
+                return {"good": true, "field": field, "score_add": score_add};
             } else if (field["gems_field"][pos1[0]][pos1[1]] == "bonus_3") {
                 field["gems_field"][pos1[0]][pos1[1]] = "removed";
                 field["score"] += score_rules["bonus_3"];
@@ -481,7 +481,7 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                         }
                     }
                 }
-                return {"good": true, "field": field};
+                return {"good": true, "field": field, "score_add": score_add};
             }
         }
     } else {
