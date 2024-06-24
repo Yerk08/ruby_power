@@ -278,7 +278,7 @@ function recount_field(field) {
                     field["gems_field"][i][j] = -1;
                     field["score"] += score_rules["ruby_get"];
                     score_add.push([i, j, score_rules["ruby_get"]]);
-                } else if (ct["field"][i][j] && field["was_bonus_3"] == undefined) {
+                } else if (ct["field"][i][j] && field["was_bonus_3"] == undefined && field["score"] > 3000) {
                     move_list.push([[-1, -1], [i, j]]);
                     field["gems_field"][i][j] = "bonus_3";
                     field["was_bonus_3"] = true;
