@@ -178,27 +178,27 @@ function recount_field(field) {
         }
     }
     for (var j = 0; j < field["m"]; ++j) {
-        if (field["gems_field"][0][j] == "stone") {
-            move_list.push([[0, j], [-1, j]]);
-            field["gems_field"][0][j] = "removed";
+        if (field["gems_field"][field["n"] - 1][j] == "stone") {
+            move_list.push([[field["n"] - 1, j], [-1, j]]);
+            field["gems_field"][field["n"] - 1][j] = "removed";
             field["score"] += score_rules["stone_fall"];
-            score_add.push([0, j, score_rules["stone_fall"]]);
-        } else if (field["gems_field"][0][j] == "bomb") {
-            move_list.push([[0, j], [-1, j]]);
-            field["gems_field"][0][j] = "removed";
+            score_add.push([field["n"] - 1, j, score_rules["stone_fall"]]);
+        } else if (field["gems_field"][field["n"] - 1][j] == "bomb") {
+            move_list.push([[field["n"] - 1, j], [-1, j]]);
+            field["gems_field"][field["n"] - 1][j] = "removed";
             field["score"] += score_rules["bomb_fall"];
-            score_add.push([0, j, score_rules["bomb_fall"]]);
-        } else if (field["gems_field"][0][j] == -1) {
-            move_list.push([[0, j], [-1, j]]);
-            field["gems_field"][0][j] = "removed";
+            score_add.push([field["n"] - 1, j, score_rules["bomb_fall"]]);
+        } else if (field["gems_field"][field["n"] - 1][j] == -1) {
+            move_list.push([[field["n"] - 1, j], [-1, j]]);
+            field["gems_field"][field["n"] - 1][j] = "removed";
             field["score"] += score_rules["ruby_fall"];
-            score_add.push([0, j, score_rules["ruby_fall"]]);
+            score_add.push([field["n"] - 1, j, score_rules["ruby_fall"]]);
         }
     }
     if (move_list.length > 0) {
         for (var j = 0; j < field["m"]; ++j) {
             var last_not_empty = [];
-            for (var i = 0; i < field["n"]; ++i) {
+            for (var i = field["n"] - 1; i >= 0; --i) {
                 if (field["gems_field"][i][j] != "empty" && field["gems_field"][i][j] != "removed") {
                     if (last_not_empty.length != 0) {
                         move_list.push([[i, j], [last_not_empty[0], j]]);
@@ -211,7 +211,7 @@ function recount_field(field) {
                 }
             }
             for (var i = 0; i < last_not_empty.length; ++i) {
-                move_list.push([[-(last_not_empty.length - i), j], [last_not_empty[i], j]]);
+                move_list.push([[-i - 1, j], [last_not_empty[i], j]]);
                 if (Math.random() * field["stones_random"] < 1 && field["stones_number"] > 0) {
                     if (Math.random() * 4 < 1 && field["has_bombs"]) {
                         field["gems_field"][last_not_empty[i]][j] = "bomb";
@@ -255,7 +255,7 @@ function recount_field(field) {
         for (var i = 0; i < field["n"]; ++i) {
             for (var j = 0; j < field["m"]; ++j) {
                 if (ct["field"][i][j]) {
-                    move_list.push([[i, j], [-1, j]]);
+                    move_list.push([[i, j], [-1, -1]]);
                     if (field["gems_field"][i][j] == -1) {
                         field["score"] += score_rules["ruby_break"];
                         score_add.push([i, j, score_rules["ruby_break"]]);
@@ -287,7 +287,7 @@ function recount_field(field) {
         }
         for (var j = 0; j < field["m"]; ++j) {
             var last_not_empty = [];
-            for (var i = 0; i < field["n"]; ++i) {
+            for (var i = field["n"] - 1; i >= 0; --i) {
                 if (field["gems_field"][i][j] != "empty" && field["gems_field"][i][j] != "removed") {
                     if (last_not_empty.length != 0) {
                         move_list.push([[i, j], [last_not_empty[0], j]]);
@@ -300,7 +300,7 @@ function recount_field(field) {
                 }
             }
             for (var i = 0; i < last_not_empty.length; ++i) {
-                move_list.push([[-(last_not_empty.length - i), j], [last_not_empty[i], j]]);
+                move_list.push([[-i - 1, j], [last_not_empty[i], j]]);
                 if (Math.random() * field["stones_random"] < 1 && field["stones_number"] > 0) {
                     if (Math.random() * 4 < 1 && field["has_bombs"]) {
                         field["gems_field"][last_not_empty[i]][j] = "bomb";
