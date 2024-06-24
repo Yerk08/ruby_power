@@ -1,6 +1,8 @@
-#gamefield {
+div {
 	position: fixed;
-	width: 100%;
-	height: 100%;
+	transition: all 0.3s ease;
 }
-
+img {
+	position: fixed;
+	transition: all 0.3s ease;
+}

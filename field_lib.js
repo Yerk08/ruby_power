@@ -211,7 +211,7 @@ function recount_field(field) {
                 }
             }
             for (var i = 0; i < last_not_empty.length; ++i) {
-                move_list.push([[-1, j], [last_not_empty[i], j]]);
+                move_list.push([[-(last_not_empty.length - i), j], [last_not_empty[i], j]]);
                 if (Math.random() * field["stones_random"] < 1 && field["stones_number"] > 0) {
                     if (Math.random() * 4 < 1 && field["has_bombs"]) {
                         field["gems_field"][last_not_empty[i]][j] = "bomb";
@@ -300,7 +300,7 @@ function recount_field(field) {
                 }
             }
             for (var i = 0; i < last_not_empty.length; ++i) {
-                move_list.push([[-1, j], [last_not_empty[i], j]]);
+                move_list.push([[-(last_not_empty.length - i), j], [last_not_empty[i], j]]);
                 if (Math.random() * field["stones_random"] < 1 && field["stones_number"] > 0) {
                     if (Math.random() * 4 < 1 && field["has_bombs"]) {
                         field["gems_field"][last_not_empty[i]][j] = "bomb";
