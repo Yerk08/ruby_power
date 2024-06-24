@@ -427,7 +427,7 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                 field["score"] += score_rules["bonus_3"];
                 for (var i = 0; i < field["n"]; ++i) {
                     for (var j = 0; j < field["m"]; ++j) {
-                        if (typeof(field["gems_field"][i][j]) == "number" && field["gems_field"][i][j] != -1) {
+                        if (typeof(field["gems_field"][i][j]) == "number" && field["gems_field"][i][j] != -1 && Math.random() * 10 < 1) {
                             field["gems_field"][i][j] = "stone";
                         }
                     }
