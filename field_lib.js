@@ -114,7 +114,7 @@ function _count_triple_field(field) {
                                     0 <= j + _dmove[k][1] * 2 + _dmove[k2][1] && j + _dmove[k][1] * 2 + _dmove[k2][1] < field["m"] &&
                                     field["gems_field"][i][j] == field["gems_field"][i + _dmove[k][0] * 2 + _dmove[k2][0]][j + _dmove[k][1] * 2 + _dmove[k2][1]]) {
                                     triple_flag = 0;
-                                    return {"triple_flag": triple_flag};
+                                    return {"triple_flag": triple_flag, "help_move": [i + _dmove[k][0] * 2 + _dmove[k2][0], j + _dmove[k][1] * 2 + _dmove[k2][1]]};
                                 }
                             }
                         }
@@ -135,7 +135,7 @@ function _count_triple_field(field) {
                                     0 <= j + _dmove[k][1] + _dmove[k2][1] && j + _dmove[k][1] + _dmove[k2][1] < field['m'] &&
                                     field["gems_field"][i][j] == field["gems_field"][i + _dmove[k][0] + _dmove[k2][0]][j + _dmove[k][1] + _dmove[k2][1]]) {
                                     triple_flag = 0;
-                                    return {"triple_flag": triple_flag};
+                                    return {"triple_flag": triple_flag, "help_move": [i + _dmove[k][0] + _dmove[k2][0], j + _dmove[k][1] + _dmove[k2][1]]};
                                 }
                             }
                         }
