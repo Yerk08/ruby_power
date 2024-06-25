@@ -1,6 +1,6 @@
 div {
 	position: fixed;
-	transition: all 2.5s ease;
+	transition: all 0.3s ease;
 	font-family: 'Courier New', Courier, monospace;
 	font-weight: bold;
 	color: black;
@@ -8,5 +8,5 @@ div {
 }
 img {
 	position: fixed;
-	transition: all 2.5s ease;
+	transition: all 0.3s ease;
 }

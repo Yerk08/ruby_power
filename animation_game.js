@@ -27,7 +27,7 @@ var field = {};
 
 var shield_elms = [], gems_elms = [], black_paper = undefined;
 var tile_size = 0;
-const wait_time = 2500;
+const wait_time = 300;
 
 var can_play = false;
 
@@ -173,8 +173,9 @@ function show_score_field(score_add) {
     }, wait_time * 4);
 }
 
-var update_animation_list_1 = [], update_animation_list_2 = [];
+
 function show_move_gems(field_new, move_list) {
+    var update_animation_list_1 = [], update_animation_list_2 = [];
     for (var ind = 0; ind < move_list.length; ++ind) {
         var r1 = move_list[ind][0][0], c1 = move_list[ind][0][1],
         r2 = move_list[ind][1][0], c2 = move_list[ind][1][1];
@@ -188,12 +189,18 @@ function show_move_gems(field_new, move_list) {
             gems_field_div.appendChild(elm2);
             gems_elms[r2][c2] = elm2;
             update_animation_list_1.push(elm2);
-            ((r2, c2, elm2) => {setTimeout(() => {
+            ((elm2) => {setTimeout(() => {
+                elm2.style.width = `${tile_size + 6}px`;
+                elm2.style.height = `${tile_size + 6}px`;
+                elm2.style.top = `${parseFloat(elm2.style.top.slice(0, -2)) - tile_size / 2 - 3}px`;
+                elm2.style.left = `${parseFloat(elm2.style.left.slice(0, -2)) - tile_size / 2 - 3}px`;
+            }, 30)})(elm2);
+            ((elm2) => {setTimeout(() => {
                 elm2.style.width = `${tile_size - 6}px`;
                 elm2.style.height = `${tile_size - 6}px`;
                 elm2.style.top = `${parseFloat(elm2.style.top.slice(0, -2)) + 6}px`;
                 elm2.style.left = `${parseFloat(elm2.style.left.slice(0, -2)) + 6}px`;
-            }, wait_time)})(r2, c2, elm2);
+            }, wait_time)})(elm2);
         } else if (c2 == -1) {
             gems_elms[r1][c1].style.width = "0px";
             gems_elms[r1][c1].style.height = "0px";
@@ -218,25 +225,15 @@ function show_move_gems(field_new, move_list) {
                 gems_field_div.removeChild(elm2);
             }, wait_time)})(gems_elms[r1][c1]);
         } else {
-            gems_elms[r1][c1].style.top = `${r2 * tile_size + margin_top}px`;
+            gems_elms[r1][c1].style.top = `${parseFloat(gems_elms[r1][c1].style.top.slice(0, -2)) + (r2 - r1) * tile_size}px`;
             gems_elms[r2][c2] = gems_elms[r1][c1];
             gems_elms[r1][c1] = undefined;
         }
     }
-}
-window.addEventListener("loadstart", () => {
-    update_animation_list_1.forEach(elm2 => {
-        elm2.style.width = `${tile_size + 6}px`;
-        elm2.style.height = `${tile_size + 6}px`;
-        elm2.style.top = `${parseFloat(elm2.style.top.slice(0, -2)) - tile_size / 2 - 3}px`;
-        elm2.style.left = `${parseFloat(elm2.style.left.slice(0, -2)) - tile_size / 2 - 3}px`;
-    });
-    update_animation_list_1 = [];
-    update_animation_list_2.forEach(element => {
+    setTimeout(() => update_animation_list_2.forEach(element => {
         element[1].style.top = `${element[0] * tile_size + 3 + margin_top}px`;
-    });
-    update_animation_list_2 = [];
-});
+    }), 30);
+}
 
 var was_bad = false;
 var help_move;
@@ -252,9 +249,9 @@ function after_move() {
     } else if (ct["triple_flag"] == -1) {
         if (was_bad) {
             was_bad = true;
-            field = update_field_from_impossible_to_playable(field, field["n"] * field["m"]);
-            update_all_field(); // bad
-            setTimeout(() => after_move(), wait_time);
+            field = update_field_from_impossible_to_playable(field, field["n"] * field["m"] * field["gems_number"]);
+            update_all_field();
+            setTimeout(() => after_move(), wait_time + 100);
         } else {
             for (var i = 0; i < field["n"]; ++i) {
                 for (var j = 0; j < field["m"]; ++j) {
@@ -272,8 +269,26 @@ function after_move() {
     }
 }
 
+function my_move(pos1, pos2) {
+    var ct = swap_two_elems_on_field(field, pos1, pos2);
+    if (ct["good"]) {
+        var score = ct["score_add"];
+        if (score == undefined) {
+            score = [];
+        }
+        ct = recount_field(ct["field"]);
+        score += ct["score_add"];
+        was_bad = false;
+        show_score_field(score);
+        show_move_gems(ct["field"], ct["move_list"])
+        update_shield_field(field, ct["field"]);
+        field = ct["field"];
+        setTimeout(() => after_move(), wait_time * 2);
+    }
+}
+
 function start_play_game(field_base) {
-    field = run_field(field_base);
+    field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * field_base["gems_number"]);
     gems_elms = [];
     shield_elms = [];
     for (var i = 0; i < field["n"]; ++i) {
@@ -288,14 +303,12 @@ function start_play_game(field_base) {
     setTimeout(() => after_move(), wait_time);
 }
 
-// aa = update_field_from_impossible_to_playable(get_empty_field(8, 8, 4, 0), 0);
-aa = get_empty_field(8, 8, 4, 3), 0;
-for (var i = 0; i < aa["n"]; ++i) {
-    for (var j = 0; j < aa["m"]; ++j) {
-        if ((i + j) % 2 == 0) {
-            aa["gems_field"][i][j]="stone";
-        }
-    }
-}
-start_play_game(aa);
+field_base = get_empty_field(8, 8, 4, 0);
+start_play_game(field_base);
+
 addEventListener("resize", update_all_field);
+
+var last_click = [-1, -1];
+onclick = (event) => {
+    console.log(event);
+}
