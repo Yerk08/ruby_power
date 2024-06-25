@@ -5,6 +5,7 @@ if ("serviceWorker" in navigator) {
 const cacheName = "ruby_power_cache-v1.2";
 const appShellFiles = [
   "index.html",
+  "help.html",
   "cache_saver.js",
   "animation_game.js",
   "field_lib.js",

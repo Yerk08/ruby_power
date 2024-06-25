@@ -44,6 +44,88 @@ var last_click = [-1, -1];
 var is_touch_pad = false;
 var margin_left = 0, margin_top = 0;
 function _review_field() {
+    edit_buttons_field.style.top = `${window.innerHeight}px`;
+    if (black_paper != undefined) {
+        animation_field_div.removeChild(black_paper);
+    }
+    black_paper = document.createElement("div");
+    black_paper.style.top = `${margin_top}px`;
+    black_paper.style.left = `${margin_left}px`;
+    black_paper.style.width = `${field['m'] * tile_size + 1}px`;
+    black_paper.style.height = `${field['n'] * tile_size + 1}px`;
+    black_paper.style.backgroundColor = "black";
+    black_paper.style.fontFamily = "";
+    black_paper.style.fontSize = "70px";
+    animation_field_div.appendChild(black_paper);
+
+    if (left_paper != undefined) {
+        animation_field_div.removeChild(left_paper);
+    }
+    if (right_paper != undefined) {
+        animation_field_div.removeChild(right_paper);
+    }
+    if (margin_top == 0) {
+        restart_button.style.top = "70px";
+        restart_button.style.left = "35px";
+        stone_counter.style.top = "150px";
+        stone_counter.style.left = "40px";
+        shield_counter.style.top = "230px";
+        shield_counter.style.left = "40px";
+        edit_button.style.top = "310px";
+        edit_button.style.left = "40px";
+        next_button.style.top = "390px";
+        next_button.style.left = "40px";
+        prev_button.style.top = "470px";
+        prev_button.style.left = "40px";
+        help_button.style.top = "550px";
+        help_button.style.left = "40px";
+        left_paper = document.createElement("div");
+        left_paper.style.top = `${margin_top}px`;
+        left_paper.style.left = `${0}px`;
+        left_paper.style.width = `${margin_left + 1}px`;
+        left_paper.style.height = `${window.innerHeight + 1}px`;
+        left_paper.style.backgroundColor = "black";
+        animation_field_div.appendChild(left_paper);
+
+        right_paper = document.createElement("div");
+        right_paper.style.top = `${0}px`;
+        right_paper.style.left = `${field['m'] * tile_size + margin_left}px`;
+        right_paper.style.width = `${window.innerWidth + 1}px`;
+        right_paper.style.height = `${window.innerHeight + 1}px`;
+        right_paper.style.backgroundColor = "black";
+        animation_field_div.appendChild(right_paper);
+    } else {
+        restart_button.style.top = "-5px";
+        restart_button.style.left = "140px";
+        stone_counter.style.top = "0px";
+        stone_counter.style.left = "225px";
+        shield_counter.style.top = "0px";
+        shield_counter.style.left = "300px";
+        edit_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+        edit_button.style.left = "10px";
+        next_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+        next_button.style.left = "90px";
+        prev_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+        prev_button.style.left = "170px";
+        help_button.style.top = `${field['n'] * tile_size + margin_top + 90}px`;
+        help_button.style.left = "10px";
+        left_paper = document.createElement("div");
+        left_paper.style.top = `${0}px`;
+        left_paper.style.left = `${margin_left}px`;
+        left_paper.style.width = `${window.innerWidth + 1}px`;
+        left_paper.style.height = `${margin_top + 1}px`;
+        left_paper.style.backgroundColor = "black";
+        animation_field_div.appendChild(left_paper);
+
+        right_paper = document.createElement("div");
+        right_paper.style.top = `${field['n'] * tile_size + margin_top}px`;
+        right_paper.style.left = `${0}px`;
+        right_paper.style.width = `${window.innerWidth + 1}px`;
+        right_paper.style.height = `${window.innerHeight + 1}px`;
+        right_paper.style.backgroundColor = "black";
+        animation_field_div.appendChild(right_paper);
+    }
+
     last_click = [-1, -1];
     is_touch_pad = false;
     for (var i = 0; i < field["n"]; ++i) {
@@ -53,90 +135,6 @@ function _review_field() {
             }
             if (gems_elms[i][j] != undefined) {
                 gems_field_div.removeChild(gems_elms[i][j]);
-            }
-            if (black_paper != undefined) {
-                animation_field_div.removeChild(black_paper);
-            }
-            black_paper = document.createElement("div");
-            black_paper.style.top = `${margin_top}px`;
-            black_paper.style.left = `${margin_left}px`;
-            black_paper.style.width = `${field['m'] * tile_size + 1}px`;
-            black_paper.style.height = `${field['n'] * tile_size + 1}px`;
-            black_paper.style.backgroundColor = "black";
-            black_paper.style.fontFamily = "";
-            black_paper.style.fontSize = "70px";
-            animation_field_div.appendChild(black_paper);
-
-            if (left_paper != undefined) {
-                animation_field_div.removeChild(left_paper);
-            }
-            if (right_paper != undefined) {
-                animation_field_div.removeChild(right_paper);
-            }
-            if (margin_top == 0) {
-                restart_button.style.top = "70px";
-                restart_button.style.left = "35px";
-                stone_counter.style.top = "150px";
-                stone_counter.style.left = "40px";
-                shield_counter.style.top = "230px";
-                shield_counter.style.left = "40px";
-                edit_button.style.top = "310px";
-                edit_button.style.left = "40px";
-                next_button.style.top = "390px";
-                next_button.style.left = "40px";
-                prev_button.style.top = "470px";
-                prev_button.style.left = "40px";
-                help_button.style.top = "550px";
-                help_button.style.left = "40px";
-                edit_buttons_field.style.top = "10px";
-                edit_buttons_field.style.left = `${field['m'] * tile_size + margin_left}px`;
-                left_paper = document.createElement("div");
-                left_paper.style.top = `${margin_top}px`;
-                left_paper.style.left = `${0}px`;
-                left_paper.style.width = `${margin_left + 1}px`;
-                left_paper.style.height = `${window.innerHeight + 1}px`;
-                left_paper.style.backgroundColor = "black";
-                animation_field_div.appendChild(left_paper);
-
-                right_paper = document.createElement("div");
-                right_paper.style.top = `${0}px`;
-                right_paper.style.left = `${field['m'] * tile_size + margin_left}px`;
-                right_paper.style.width = `${window.innerWidth + 1}px`;
-                right_paper.style.height = `${window.innerHeight + 1}px`;
-                right_paper.style.backgroundColor = "black";
-                animation_field_div.appendChild(right_paper);
-            } else {
-                restart_button.style.top = "-5px";
-                restart_button.style.left = "140px";
-                stone_counter.style.top = "0px";
-                stone_counter.style.left = "225px";
-                shield_counter.style.top = "0px";
-                shield_counter.style.left = "300px";
-                edit_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
-                edit_button.style.left = "10px";
-                next_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
-                next_button.style.left = "90px";
-                prev_button.style.top = `${field['n'] * tile_size + margin_top}px`;
-                prev_button.style.left = "170px";
-                edit_buttons_field.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
-                edit_buttons_field.style.left = "90px";
-                help_button.style.top = `${field['n'] * tile_size + margin_top + 90}px`;
-                help_button.style.left = "10px";
-                left_paper = document.createElement("div");
-                left_paper.style.top = `${0}px`;
-                left_paper.style.left = `${margin_left}px`;
-                left_paper.style.width = `${window.innerWidth + 1}px`;
-                left_paper.style.height = `${margin_top + 1}px`;
-                left_paper.style.backgroundColor = "black";
-                animation_field_div.appendChild(left_paper);
-
-                right_paper = document.createElement("div");
-                right_paper.style.top = `${field['n'] * tile_size + margin_top}px`;
-                right_paper.style.left = `${0}px`;
-                right_paper.style.width = `${window.innerWidth + 1}px`;
-                right_paper.style.height = `${window.innerHeight + 1}px`;
-                right_paper.style.backgroundColor = "black";
-                animation_field_div.appendChild(right_paper);
             }
 
             if (field["gems_field"][i][j] != "empty") {
@@ -490,6 +488,17 @@ function run_edit_mode() {
         score_div.innerText = "edit";
         score_div.style.fontSize = "50px";
         update_all_field();
+        if (margin_top == 0) {
+            next_button.style.left = "-100px";
+            prev_button.style.left = "-100px";
+            edit_buttons_field.style.top = "10px";
+            edit_buttons_field.style.left = `${field['m'] * tile_size + margin_left}px`;
+        } else {
+            next_button.style.top = `${window.innerHeight}px`;
+            prev_button.style.top = `${window.innerHeight}px`;
+            edit_buttons_field.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+            edit_buttons_field.style.left = "90px";
+        }
         can_play = false;
     }
 }
@@ -620,7 +629,8 @@ function edit_selecting(name) {
 }
 
 function generate_primitive_fields() {
-    all_fields = [get_empty_field(8, 8, 4, 0, 1, 5, false)];
+    all_fields = [];
+    all_fields.push(get_empty_field(8, 8, 4, 0, 1, 5, false));
     localStorage.setItem("all_fields", JSON.stringify(all_fields));
 }
 
