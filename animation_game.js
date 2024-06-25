@@ -350,8 +350,8 @@ function after_move() {
 function my_move(pos1, pos2) {
     var ct = swap_two_elems_on_field(field, pos1, pos2);
     swap_two_elems(pos1, pos2);
+    can_play = false;
     setTimeout(() => {
-        can_play = false;
         if (ct["good"]) {
             var score_add = ct["score_add"];
             if (ct["score_add"] == undefined) {
@@ -466,5 +466,8 @@ window.addEventListener("touchstart", press_down_mouse);
 window.addEventListener("touchend", press_up_mouse);
 
 
-field_base = get_empty_field(9, 9, 5, 2, 8, 10);
+field_base = get_empty_field(8, 10, 5, 2, 8, 10);
+for (var i = 0; i < field_base["m"]; ++i) {
+    field_base["gems_field"][3][i] = "empty";
+}
 start_play_game(field_base);
