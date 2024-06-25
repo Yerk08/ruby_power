@@ -356,6 +356,9 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                 return {"good": false, "field": field};
             }
         } else {
+            var x = field["gems_field"][pos2[0]][pos2[1]];
+            field["gems_field"][pos2[0]][pos2[1]] = field["gems_field"][pos1[0]][pos1[1]];
+            field["gems_field"][pos1[0]][pos1[1]] = x;
             if (typeof(field["gems_field"][pos1[0]][pos1[1]]) == "number") {
                 pos1[0] += pos2[0];
                 pos2[0] = pos1[0] - pos2[0];
@@ -364,9 +367,6 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                 pos2[1] = pos1[1] - pos2[1];
                 pos1[1] = pos1[1] - pos2[1];
             }
-            var x = field["gems_field"][pos2[0]][pos2[1]];
-            field["gems_field"][pos2[0]][pos2[1]] = field["gems_field"][pos1[0]][pos1[1]];
-            field["gems_field"][pos1[0]][pos1[1]] = x;
             if (field["gems_field"][pos1[0]][pos1[1]] == "bonus_1") {
                 for (var i = -1; i <= 1; ++i) {
                     for (var j = -1; j <= 1; ++j) {
