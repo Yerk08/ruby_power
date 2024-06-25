@@ -34,6 +34,7 @@ var can_play = false;
 
 var margin_left = 0, margin_top = 0;
 function _review_field() {
+    last_click = [-1, -1];
     for (var i = 0; i < field["n"]; ++i) {
         for (var j = 0; j < field["m"]; ++j) {
             if (shield_elms[i][j] != undefined) {
@@ -146,7 +147,7 @@ function show_score_field(score_add) {
         if (score_add[i][2] != 0) {
             var elm = document.createElement("div");
             elm.innerText = score_add[i][2];
-            elm.style.fontSize = `${tile_size / score_add[i][2].toString().length}px`;
+            elm.style.fontSize = `${(tile_size * 1.5) / score_add[i][2].toString().length}px`;
             elm.style.width = `${tile_size}px`;
             elm.style.height = `${tile_size}px`;
             elm.style.top = `${score_add[i][0] * tile_size + margin_top}px`;
@@ -324,20 +325,55 @@ function start_play_game(field_base) {
     setTimeout(() => after_move(), wait_time);
 }
 
-field_base = get_empty_field(8, 8, 4, 2);
+field_base = get_empty_field(9, 9, 4, 2, 8, 10);
+for (var i = 2; i <= 6; ++i) {
+    field_base["gems_field"][i][2] = "empty";
+    field_base["gems_field"][2][i] = "empty";
+    field_base["gems_field"][i][6] = "empty";
+    field_base["gems_field"][6][i] = "empty";
+}
 start_play_game(field_base);
 
 addEventListener("resize", update_all_field);
 
 var last_click = [-1, -1];
-onclick = (event) => {
+onmousedown = (event) => {
     var pos = [Math.floor((event.clientY - margin_top) / tile_size), Math.floor((event.clientX - margin_left) / tile_size)];
     if (0 <= pos[0] && pos[0] < field["n"] && 0 <= pos[1] && pos[1] < field["m"] && can_play) {
-        if (last_click[0] == -1 || last_click == pos) {
-            last_click = pos;
+        if (last_click[0] == -1) {
+            if (typeof(field["gems_field"][pos[0]][pos[1]]) == "number" || field["gems_field"][pos[0]][pos[1]] == "bonus_1" || field["gems_field"][pos[0]][pos[1]] == "bonus_2" || field["gems_field"][pos[0]][pos[1]] == "bonus_3") {
+                last_click = pos;
+                gems_elms[pos[0]][pos[1]].style.transform = "rotate(180deg)";
+            } else {
+                last_click = -1;
+            }
         } else {
-            my_move(last_click, pos);
+            gems_elms[last_click[0]][last_click[1]].style.transform = "";
+            if (Math.abs(last_click[0] - pos[0]) + Math.abs(last_click[1] - pos[1]) == 1 && (typeof(field["gems_field"][pos[0]][pos[1]]) == "number" || field["gems_field"][pos[0]][pos[1]] == "bonus_1" || field["gems_field"][pos[0]][pos[1]] == "bonus_2" || field["gems_field"][pos[0]][pos[1]] == "bonus_3")) {
+                my_move(last_click, pos);
+            }
             last_click = [-1, -1];
+        }
+    }
+}
+onmouseup = (event) => {
+    var pos = [Math.floor((event.clientY - margin_top) / tile_size), Math.floor((event.clientX - margin_left) / tile_size)];
+    if (0 <= pos[0] && pos[0] < field["n"] && 0 <= pos[1] && pos[1] < field["m"] && can_play) {
+        if (last_click[0] != -1 && (last_click[0] != pos[0] || last_click[1] != pos[1])) {
+            if (last_click[0] == -1) {
+                if (typeof(field["gems_field"][pos[0]][pos[1]]) == "number" || field["gems_field"][pos[0]][pos[1]] == "bonus_1" || field["gems_field"][pos[0]][pos[1]] == "bonus_2" || field["gems_field"][pos[0]][pos[1]] == "bonus_3") {
+                    last_click = pos;
+                    gems_elms[pos[0]][pos[1]].style.transform = "rotate(180deg)";
+                } else {
+                    last_click = -1;
+                }
+            } else {
+                gems_elms[last_click[0]][last_click[1]].style.transform = "";
+                if (Math.abs(last_click[0] - pos[0]) + Math.abs(last_click[1] - pos[1]) == 1 && (typeof(field["gems_field"][pos[0]][pos[1]]) == "number" || field["gems_field"][pos[0]][pos[1]] == "bonus_1" || field["gems_field"][pos[0]][pos[1]] == "bonus_2" || field["gems_field"][pos[0]][pos[1]] == "bonus_3")) {
+                    my_move(last_click, pos);
+                }
+                last_click = [-1, -1];
+            }
         }
     }
 }
