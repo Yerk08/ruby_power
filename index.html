@@ -19,6 +19,19 @@
 		<img id="next_button" src="images/arrow_right.png" onclick="next_field()"></img>
 		<img id="prev_button" src="images/arrow_left.png" onclick="prev_field()"></img>
 		<img id="edit_button" src="images/edit_button.png" onclick="run_edit_mode()"></img>
+		<img id="help_button" src="images/help_button.png" onclick="window.location.replace('/help.html')"></img>
+		<div id="edit_buttons_field">
+			<img src="images/card_add.png" class="edit_buttons_field_img" onclick="edit_add_new()"></img>
+			<img src="images/restart_button.png" class="edit_buttons_field_img" onclick="redo_editing()"></img>
+			<img src="images/stone.jpg" class="edit_buttons_field_img stone" onclick="edit_selecting('stone')"></img>
+			<img src="images/bomb.jpg" class="edit_buttons_field_img bomb" onclick="edit_selecting('bomb')"></img>
+			<img src="images/empty.jpg" class="edit_buttons_field_img empty" onclick="edit_selecting('empty')"></img>
+			<img src="images/gem.png" class="edit_buttons_field_img gem" onclick="edit_selecting('gem')"></img>
+			<img src="images/ruby.png" class="edit_buttons_field_img -1" onclick="edit_selecting(-1)"></img>
+			<img src="images/bonus_1.png" class="edit_buttons_field_img bonus_1" onclick="edit_selecting('bonus_1')"></img>
+			<img src="images/bonus_2.png" class="edit_buttons_field_img bonus_2" onclick="edit_selecting('bonus_2')"></img>
+			<img src="images/bonus_3.png" class="edit_buttons_field_img bonus_3" onclick="edit_selecting('bonus_3')"></img>
+		</div>
 	</body>
 	<script src="animation_game.js"></script>
 </html>

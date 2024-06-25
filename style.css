@@ -2,6 +2,10 @@
 	100% {transform: rotate(-360deg);}
 }
 
+body {
+	background-color:black;
+	color:snow;
+}
 div {
 	position: fixed;
 	transition: all 0.3s ease;
@@ -36,13 +40,21 @@ img {
 	opacity: 0;
 }
 #prev_button {
-	width: 70px;
-	height: 70px;
+	width: 60px;
+	height: 60px;
 	opacity: 0;
 }
 #edit_button {
 	width: 70px;
 	height: 70px;
+}
+#help_button {
+	width: 70px;
+	height: 70px;
+}
+.edit_buttons_field_img {
+	position: relative;
+	opacity: 0;
 }
 #stone_counter {
 	background-image: url("images/stone.jpg");

@@ -31,6 +31,8 @@ const shield_counter = document.getElementById("shield_counter");
 const next_button = document.getElementById("next_button");
 const prev_button = document.getElementById("prev_button");
 const edit_button = document.getElementById("edit_button");
+const edit_buttons_field = document.getElementById("edit_buttons_field");
+const help_button = document.getElementById("help_button");
 var field = {};
 
 var shield_elms = [], gems_elms = [], black_paper = undefined, left_paper = undefined, right_paper = undefined;
@@ -84,6 +86,10 @@ function _review_field() {
                 next_button.style.left = "40px";
                 prev_button.style.top = "470px";
                 prev_button.style.left = "40px";
+                help_button.style.top = "550px";
+                help_button.style.left = "40px";
+                edit_buttons_field.style.top = "10px";
+                edit_buttons_field.style.left = `${field['m'] * tile_size + margin_left}px`;
                 left_paper = document.createElement("div");
                 left_paper.style.top = `${margin_top}px`;
                 left_paper.style.left = `${0}px`;
@@ -110,8 +116,12 @@ function _review_field() {
                 edit_button.style.left = "10px";
                 next_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
                 next_button.style.left = "90px";
-                prev_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+                prev_button.style.top = `${field['n'] * tile_size + margin_top}px`;
                 prev_button.style.left = "170px";
+                edit_buttons_field.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+                edit_buttons_field.style.left = "90px";
+                help_button.style.top = `${field['n'] * tile_size + margin_top + 90}px`;
+                help_button.style.left = "10px";
                 left_paper = document.createElement("div");
                 left_paper.style.top = `${0}px`;
                 left_paper.style.left = `${margin_left}px`;
@@ -162,6 +172,44 @@ function _review_field() {
     }
     setTimeout(() => black_paper.style.backgroundColor = "transparent", 10);
 }
+function _update_cell_field(i, j) {
+    if (shield_elms[i][j] != undefined) {
+        shield_field_div.removeChild(shield_elms[i][j]);
+    }
+    if (gems_elms[i][j] != undefined) {
+        gems_field_div.removeChild(gems_elms[i][j]);
+    }
+    if (field["gems_field"][i][j] != "empty") {
+        var elm2 = document.createElement("img");
+        elm2.src = elms_to_picture[field["gems_field"][i][j]];
+        elm2.style.width = `${tile_size - 8}px`;
+        elm2.style.height = `${tile_size - 8}px`;
+        elm2.style.top = `${i * tile_size + 4 + margin_top}px`;
+        elm2.style.left = `${j * tile_size + 4 + margin_left}px`;
+        gems_field_div.appendChild(elm2);
+        gems_elms[i][j] = elm2;
+
+        var elm = document.createElement("img");
+        elm.src = elms_shield_to_picture[field["shield_field"][i][j]];
+        elm.style.width = `${tile_size + 1}px`;
+        elm.style.height = `${tile_size + 1}px`;
+        elm.style.top = `${i * tile_size + margin_top}px`;
+        elm.style.left = `${j * tile_size + margin_left}px`;
+        shield_field_div.appendChild(elm);
+        shield_elms[i][j] = elm;
+    } else {
+        gems_elms[i][j] = undefined;
+        var elm = document.createElement("img");
+        elm.src = elms_to_picture[field["gems_field"][i][j]];
+        elm.style.width = `${tile_size + 1}px`;
+        elm.style.height = `${tile_size + 1}px`;
+        elm.style.top = `${i * tile_size + margin_top}px`;
+        elm.style.left = `${j * tile_size + margin_left}px`;
+        shield_field_div.appendChild(elm);
+        shield_elms[i][j] = elm;
+    }
+}
+
 function update_all_field() {
     if (field["gems_field"] != undefined) {
         margin_left = 0;
@@ -412,18 +460,34 @@ function run_edit_mode() {
         update_buttons_opacity();
         edit_mode = !edit_mode;
         edit_button.src = "images/edit_button.png";
+        const ar = document.getElementsByClassName("edit_buttons_field_img");
+        for (var i = 0; i < ar.length; ++i) {
+            ar[i].style.opacity = "0";
+            ar[i].style.transform = "";
+        };
         is_win = false;
+        all_fields[JSON.parse(localStorage.getItem("last_field"))] = field;
+        localStorage.setItem("all_fields", JSON.stringify(all_fields));
+        field_base = field;
         field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
+        show_score_and_save_game();
         update_all_field();
         can_play = true;
     } else {
+        selected_edit = "";
         restart_button.style.opacity = "0";
         next_button.style.opacity = "0";
         prev_button.style.opacity = "0";
         edit_mode = !edit_mode;
         edit_button.src = "images/edit_button_enabled.png";
+        const ar = document.getElementsByClassName("edit_buttons_field_img");
+        for (var i = 0; i < ar.length; ++i) {
+            ar[i].style.opacity = "1";
+            ar[i].style.width = `${Math.min(window.innerHeight, window.innerWidth) / 6}px`;
+            ar[i].style.height = `${Math.min(window.innerHeight, window.innerWidth) / 6}px`;
+        };
         field = field_base;
-        score_div.innerText = "0";
+        score_div.innerText = "edit";
         score_div.style.fontSize = "50px";
         update_all_field();
         can_play = false;
@@ -465,15 +529,19 @@ function after_move() {
             show_score_and_save_game();
             setTimeout(() => after_move(), wait_time + 100);
         } else {
+            var was_replaced = false;
             for (var i = 0; i < field["n"]; ++i) {
                 for (var j = 0; j < field["m"]; ++j) {
                     if (typeof(field["gems_field"][i][j]) == "number") {
                         field["gems_field"][i][j] = "gem";
+                        was_replaced = true;
                     }
                 }
             }
-            show_score_and_save_game();
-            update_all_field();
+            if (was_replaced) {
+                show_score_and_save_game();
+                update_all_field();
+            }
         }
     } else {
         show_score_and_save_game();
@@ -481,7 +549,7 @@ function after_move() {
         can_play = true;
         help_move = ct["help_move"];
         setTimeout(() => {
-            if (Date.now() - last_after_move >= help_wait_time && last_click[0] == -1) {
+            if (Date.now() - last_after_move >= help_wait_time && last_click[0] == -1 && field["gems_field"][help_move[0]][help_move[1]] != "gem") {
                 last_click = help_move;
                 gems_elms[last_click[0]][last_click[1]].style.transform = "scale(2.0)";
             }
@@ -530,6 +598,48 @@ function start_play_game() {
 
 addEventListener("resize", update_all_field);
 
+
+function edit_add_new() {
+    if (edit_mode) {
+        all_fields.push(get_empty_field(8, 8, 5, 2, 16, 15, false));
+        run_edit_mode();
+    }
+}
+function edit_selecting(name) {
+    if (edit_mode) {
+        const ar = document.getElementsByClassName("edit_buttons_field_img");
+        for (var i = 0; i < ar.length; ++i) {
+            ar[i].style.transform = "";
+        };
+        const ar2 = document.getElementsByClassName(name);
+        for (var i = 0; i < ar2.length; ++i) {
+            ar2[i].style.transform = "scale(1.5)";
+        }
+        selected_edit = name;
+    }
+}
+
+function generate_primitive_fields() {
+    all_fields = [get_empty_field(8, 8, 4, 0, 1, 5, false)];
+    localStorage.setItem("all_fields", JSON.stringify(all_fields));
+}
+
+function redo_editing() {
+    if (edit_mode) {
+        generate_primitive_fields();
+        localStorage.setItem("last_field", JSON.stringify(0));
+        field = all_fields[0];
+        run_edit_mode();
+    }
+}
+
+var all_fields;
+if (localStorage.getItem("all_fields") == undefined) {
+    generate_primitive_fields();
+} else {
+    all_fields = JSON.parse(localStorage.getItem("all_fields"));
+}
+var selected_edit = "";
 function press_down_mouse(event) {
     var pos = [-1, -1];
     if (event.changedTouches == undefined && !is_touch_pad) {
@@ -537,6 +647,34 @@ function press_down_mouse(event) {
     } else {
         is_touch_pad = true;
         var pos = [Math.floor((event.changedTouches[0].pageY - margin_top) / tile_size), Math.floor((event.changedTouches[0].pageX - margin_left) / tile_size)];
+    }
+    if (edit_mode) {
+        if (0 <= pos[0] && pos[0] < field["n"] && 0 <= pos[1] && pos[1] < field["m"]) {
+            if (selected_edit != "") {
+                var back_cell = field["gems_field"][pos[0]][pos[1]];
+                field["gems_field"][pos[0]][pos[1]] = selected_edit;
+                if (!check_field_is_possible(field)) {
+                    field["gems_field"][pos[0]][pos[1]] = back_cell;
+                } else {
+                    _update_cell_field(pos[0], pos[1]);
+                }
+            }
+            var stone_cnt = field["stones_number"], shield_cnt = 0;
+            for (var i = 0; i < field["n"]; ++i) {
+                for (var j = 0; j < field["m"]; ++j) {
+                    if (field["gems_field"][i][j] != "empty") {
+                        shield_cnt += field["shield_field"][i][j];
+                    }
+                    if (field["gems_field"][i][j] == "stone" || field["gems_field"][i][j] == "bomb") {
+                        ++stone_cnt;
+                    }
+                }
+            }
+            stone_counter.innerText = stone_cnt;
+            shield_counter.innerText = shield_cnt;
+            stone_counter.style.opacity = "1";
+            shield_counter.style.opacity = "1";
+        }
     }
     if (0 <= pos[0] && pos[0] < field["n"] && 0 <= pos[1] && pos[1] < field["m"] && can_play) {
         if (last_click[0] == -1) {
@@ -607,7 +745,6 @@ window.addEventListener("touchstart", press_down_mouse);
 window.addEventListener("touchend", press_up_mouse);
 
 
-all_fields = [get_empty_field(8, 8, 4, 2, 10, 10), get_empty_field(6, 6, 5, 0, 1, 1, false), get_empty_field(10, 10, 8, 2, 100, 20)];
 if (localStorage.getItem("last_field") == undefined) {
     localStorage.setItem("last_field", "0");
 }

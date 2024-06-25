@@ -34,7 +34,11 @@ const appShellFiles = [
   "images/restart_button.png",
   "images/arrow_right.png",
   "images/arrow_left.png",
-  "images/edit_button.png"
+
+  "images/edit_button.png",
+  "images/cart_add.png",
+  "images/cart_remove.png",
+  "images/help_button.png"
 ];
 
 self.addEventListener("install", (event) => {

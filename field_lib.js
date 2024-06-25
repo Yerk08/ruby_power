@@ -52,12 +52,14 @@ function check_field_is_possible(field) {
 
 function run_field(field) {
     field = JSON.parse(JSON.stringify(field));
-    for (var i = 0; i < field["n"]; ++i) {
-        for (var j = 0; j < field["m"]; ++j) {
-            if (field["gems_field"][i][j] == "gem") {
-                field["gems_field"][i][j] = Math.floor(Math.random() * field["gems_number"]) % field["gems_number"];
-            } else if (field["gems_field"][i][j] == "empty"){
-                field["shield_field"][i][j] = 0;
+    if (field["gems_number"] > 0) {
+        for (var i = 0; i < field["n"]; ++i) {
+            for (var j = 0; j < field["m"]; ++j) {
+                if (field["gems_field"][i][j] == "gem") {
+                    field["gems_field"][i][j] = Math.floor(Math.random() * field["gems_number"]) % field["gems_number"];
+                } else if (field["gems_field"][i][j] == "empty"){
+                    field["shield_field"][i][j] = 0;
+                }
             }
         }
     }
@@ -158,6 +160,9 @@ function _count_triple_field(field) {
 }
 
 function update_field_from_impossible_to_playable(field, tryies = -1) {
+    if (field["gems_number"] == 0) {
+        return field;
+    }
     field = JSON.parse(JSON.stringify(field));
     var ct = undefined;
     for (var t = 0; t < tryies || tryies == -1; ++t) {
@@ -388,8 +393,22 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                 pos1[1] = pos1[1] - pos2[1];
             }
             if (field["gems_field"][pos1[0]][pos1[1]] == "bonus_1") {
-                for (var i = -1; i <= 1; ++i) {
-                    for (var j = -1; j <= 1; ++j) {
+                var boom_power = 1;
+                for (var k = 0; k < 4; ++k) {
+                    var i = _dmove[k][0];
+                    var j = _dmove[k][1];
+                    if (0 <= pos1[0] + i && pos1[0] + i < field["n"] &&
+                    0 <= pos1[1] + j && pos1[1] + j < field["m"] &&
+                    field["gems_field"][pos1[0] + i][pos1[1] + j] == "bonus_1") {
+                        if (0 <= pos1[0] + i * 2 && pos1[0] + i * 2 < field["n"] &&
+                        0 <= pos1[1] + j * 2 && pos1[1] + j * 2 < field["m"] &&
+                        field["gems_field"][pos1[0] + i * 2][pos1[1] + j * 2] == "bonus_1") {
+                            ++boom_power;
+                        }
+                    }
+                }
+                for (var i = -boom_power; i <= boom_power; ++i) {
+                    for (var j = -boom_power; j <= boom_power; ++j) {
                         if (0 <= pos1[0] + i && pos1[0] + i < field["n"] &&
                         0 <= pos1[1] + j && pos1[1] + j < field["m"]) {
                             if (typeof(field["gems_field"][pos1[0] + i][pos1[1] + j]) == "number" && field["gems_field"][pos1[0] + i][pos1[1] + j] != -1) {
