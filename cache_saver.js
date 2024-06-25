@@ -36,6 +36,7 @@ const appShellFiles = [
   "images/arrow_left.png",
 
   "images/edit_button.png",
+  "images/edit_button_enabled.png",
   "images/card_add.png",
   
   "images/help_button.png",
