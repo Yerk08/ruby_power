@@ -62,6 +62,7 @@ function _review_field() {
             black_paper.style.height = `${field['n'] * tile_size + 1}px`;
             black_paper.style.backgroundColor = "black";
             black_paper.style.fontFamily = "";
+            black_paper.style.fontSize = "70px";
             animation_field_div.appendChild(black_paper);
 
             if (left_paper != undefined) {
