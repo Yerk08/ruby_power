@@ -27,7 +27,7 @@ var field = {};
 
 var shield_elms = [], gems_elms = [], black_paper = undefined;
 var tile_size = 0;
-const wait_time = 500;
+const wait_time = 2500;
 
 var can_play = false;
 
@@ -52,7 +52,6 @@ function _review_field() {
             black_paper.style.height = `${field['n'] * tile_size + 1}px`;
             black_paper.style.backgroundColor = "black";
             animation_field_div.appendChild(black_paper);
-            setTimeout(() => black_paper.style.backgroundColor = "transparent", 0);
 
             if (field["gems_field"][i][j] != "empty") {
                 var elm2 = document.createElement("img");
@@ -85,6 +84,7 @@ function _review_field() {
             }
         }
     }
+    setTimeout(() => black_paper.style.backgroundColor = "transparent", 10);
 }
 function update_all_field() {
     if (field["gems_field"] != undefined) {
@@ -116,8 +116,9 @@ function update_shield_field(field, field_new) {
                 elm.style.left = `${j * tile_size + margin_left}px`;
                 shield_field_was_div.appendChild(elm);
 
-                shield_elms[i][j].style.height = "0px";
-                shield_elms[i][j].style.top = `${i * tile_size + margin_top + tile_size / 2}px`;
+                shield_elms[i][j].style.opacity = "0";
+                // shield_elms[i][j].style.height = "0px";
+                // shield_elms[i][j].style.top = `${i * tile_size + margin_top + tile_size / 2}px`;
                 todelete.push(shield_elms[i][j]);
                 shield_elms[i][j] = elm;
             }
@@ -143,7 +144,9 @@ function show_score_field(score_add) {
     for (var i = 0; i < score_add.length; ++i) {
         var elm = document.createElement("div");
         elm.innerText = score_add[i][2];
-        elm.style.fontSize = `${(tile_size * 1.5) / score_add[i][2].toString().length}px`;
+        elm.style.fontSize = `${tile_size / score_add[i][2].toString().length}px`;
+        elm.style.width = `${tile_size}px`;
+        elm.style.height = `${tile_size}px`;
         elm.style.top = `${score_add[i][0] * tile_size + margin_top}px`;
         elm.style.left = `${score_add[i][1] * tile_size + margin_left}px`;
         elm.style.color = "transparent";
@@ -170,26 +173,27 @@ function show_score_field(score_add) {
     }, wait_time * 4);
 }
 
+var update_animation_list_1 = [], update_animation_list_2 = [];
 function show_move_gems(field_new, move_list) {
     for (var ind = 0; ind < move_list.length; ++ind) {
         var r1 = move_list[ind][0][0], c1 = move_list[ind][0][1],
         r2 = move_list[ind][1][0], c2 = move_list[ind][1][1];
         if (c1 == -1) {
             var elm2 = document.createElement("img");
-            elm2.src = elms_to_picture[field_new["gems_field"][r2][c2]];
+            elm2.src = elms_to_picture[move_list[ind][2]];
             elm2.style.width = "0px";
             elm2.style.height = "0px";
             elm2.style.top = `${r2 * tile_size + margin_top + tile_size / 2}px`;
             elm2.style.left = `${c2 * tile_size + margin_left + tile_size / 2}px`;
             gems_field_div.appendChild(elm2);
             gems_elms[r2][c2] = elm2;
-            console.log(r1,c1,r2,c2, elm2);
+            update_animation_list_1.push(elm2);
             ((r2, c2, elm2) => {setTimeout(() => {
                 elm2.style.width = `${tile_size - 6}px`;
                 elm2.style.height = `${tile_size - 6}px`;
-                elm2.style.top = `${r2 * tile_size + 3 + margin_top}px`;
-                elm2.style.left = `${c2 * tile_size + 3 + margin_left}px`;
-            }, 1000)})(r2, c2, elm2);
+                elm2.style.top = `${parseFloat(elm2.style.top.slice(0, -2)) + 6}px`;
+                elm2.style.left = `${parseFloat(elm2.style.left.slice(0, -2)) + 6}px`;
+            }, wait_time)})(r2, c2, elm2);
         } else if (c2 == -1) {
             gems_elms[r1][c1].style.width = "0px";
             gems_elms[r1][c1].style.height = "0px";
@@ -198,12 +202,77 @@ function show_move_gems(field_new, move_list) {
             ((elm2) => {setTimeout(() => {
                 gems_field_div.removeChild(elm2);
             }, wait_time)})(gems_elms[r1][c1]);
+        } else if (r1 < 0) {
+            var elm2 = document.createElement("img");
+            elm2.src = elms_to_picture[move_list[ind][2]];
+            elm2.style.width = `${tile_size - 6}px`;
+            elm2.style.height = `${tile_size - 6}px`;
+            elm2.style.top = `${r1 * tile_size + 3 + margin_top}px`;
+            elm2.style.left = `${c2 * tile_size + 3 + margin_left}px`;
+            gems_field_div.appendChild(elm2);
+            gems_elms[r2][c2] = elm2;
+            update_animation_list_2.push([r2, elm2]);
+        } else if (r2 < 0) {
+            gems_elms[r1][c1].style.top = `${field["n"] * tile_size + margin_top}px`;
+            ((elm2) => {setTimeout(() => {
+                gems_field_div.removeChild(elm2);
+            }, wait_time)})(gems_elms[r1][c1]);
+        } else {
+            gems_elms[r1][c1].style.top = `${r2 * tile_size + margin_top}px`;
+            gems_elms[r2][c2] = gems_elms[r1][c1];
+            gems_elms[r1][c1] = undefined;
         }
     }
 }
+window.addEventListener("loadstart", () => {
+    update_animation_list_1.forEach(elm2 => {
+        elm2.style.width = `${tile_size + 6}px`;
+        elm2.style.height = `${tile_size + 6}px`;
+        elm2.style.top = `${parseFloat(elm2.style.top.slice(0, -2)) - tile_size / 2 - 3}px`;
+        elm2.style.left = `${parseFloat(elm2.style.left.slice(0, -2)) - tile_size / 2 - 3}px`;
+    });
+    update_animation_list_1 = [];
+    update_animation_list_2.forEach(element => {
+        element[1].style.top = `${element[0] * tile_size + 3 + margin_top}px`;
+    });
+    update_animation_list_2 = [];
+});
 
+var was_bad = false;
+var help_move;
+function after_move() {
+    ct = recount_field(field);
+    if (ct["triple_flag"] == 1) {
+        was_bad = false;
+        show_score_field(ct["score_add"]);
+        show_move_gems(ct["field"], ct["move_list"])
+        update_shield_field(field, ct["field"]);
+        field = ct["field"];
+        setTimeout(() => after_move(), wait_time * 2);
+    } else if (ct["triple_flag"] == -1) {
+        if (was_bad) {
+            was_bad = true;
+            field = update_field_from_impossible_to_playable(field, field["n"] * field["m"]);
+            update_all_field(); // bad
+            setTimeout(() => after_move(), wait_time);
+        } else {
+            for (var i = 0; i < field["n"]; ++i) {
+                for (var j = 0; j < field["m"]; ++j) {
+                    if (typeof(field["gems_field"][i][j]) == "number") {
+                        field["gems_field"][i][j] = "gem";
+                    }
+                }
+            }
+            update_all_field();
+            console.log("bad");
+        }
+    } else {
+        was_bad = false;
+        can_play = true;
+    }
+}
 
-function play_game(field_base) {
+function start_play_game(field_base) {
     field = run_field(field_base);
     gems_elms = [];
     shield_elms = [];
@@ -216,20 +285,17 @@ function play_game(field_base) {
         }
     }
     update_all_field();
-    setTimeout(() => {
-        ct = recount_field(field);
-        show_score_field(ct["score_add"]);
-        show_move_gems(ct["field"], ct["move_list"])
-        update_shield_field(field, ct["field"]);
-        field = ct["field"];
-    }, wait_time * 3);
+    setTimeout(() => after_move(), wait_time);
 }
 
 // aa = update_field_from_impossible_to_playable(get_empty_field(8, 8, 4, 0), 0);
-aa = get_empty_field(8, 8, 2, 3), 0;
-aa["gems_field"][0][0]="empty";
-aa["gems_field"][7][0]="empty";
-aa["gems_field"][7][7]="empty";
-aa["gems_field"][0][7]="empty";
-play_game(aa);
+aa = get_empty_field(8, 8, 4, 3), 0;
+for (var i = 0; i < aa["n"]; ++i) {
+    for (var j = 0; j < aa["m"]; ++j) {
+        if ((i + j) % 2 == 0) {
+            aa["gems_field"][i][j]="stone";
+        }
+    }
+}
+start_play_game(aa);
 addEventListener("resize", update_all_field);

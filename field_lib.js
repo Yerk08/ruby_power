@@ -1,4 +1,4 @@
-var score_rules = {"move": 0, "pop_shield": 20, "stone_fall": 200, "bomb_fall": 300, "bomb_boom": -2100, "bonus_1": 400, "bonus_2": 700, "bonus_3": 1200, "ruby_get": 1000, "ruby_fall": -1000, "ruby_break": 5000}; // bonus_1 - for 4 connected, removes available 3x3; bonus_2 - for 5 connected, removes available row and column; bonus_3 - for 3000+ score - removes some cells with gems; ruby - for 6-7 connected, like a stone can fall and can destroy like a gems; ruby has -1 number;
+var score_rules = {"move": 0, "pop_shield": 20, "stone_fall": 200, "bomb_fall": 300, "bomb_boom": -7000, "bonus_1": 400, "bonus_2": 700, "bonus_3": 1200, "ruby_get": 1000, "ruby_fall": -1000, "ruby_break": 5000}; // bonus_1 - for 4 connected, removes available 3x3; bonus_2 - for 5 connected, removes available row and column; bonus_3 - for 3000+ score - removes some cells with gems; ruby - for 6-7 connected, like a stone can fall and can destroy like a gems; ruby has -1 number;
 function get_empty_field(n, m, gems_number = 4, shield_number = 0, stones_number = 1, stones_random = 5, has_bombs = true) {
     var field = [];
     var shield = [];
@@ -112,11 +112,19 @@ function _count_triple_field(field) {
                                 var k2 = (k + k_point + 4) % 4;
                                 if (0 <= i + _dmove[k][0] * 2 + _dmove[k2][0] && i + _dmove[k][0] * 2 + _dmove[k2][0] < field["n"] &&
                                     0 <= j + _dmove[k][1] * 2 + _dmove[k2][1] && j + _dmove[k][1] * 2 + _dmove[k2][1] < field["m"] &&
-                                    field["gems_field"][i][j] == field["gems_field"][i + _dmove[k][0] * 2 + _dmove[k2][0]][j + _dmove[k][1] * 2 + _dmove[k2][1]]) {
+                                    field["gems_field"][i][j] == field["gems_field"][i + _dmove[k][0] * 2 + _dmove[k2][0]][j + _dmove[k][1] * 2 + _dmove[k2][1]] &&
+                                    typeof(field["gems_field"][i + _dmove[k][0] * 2][j + _dmove[k][1] * 2]) == "number") {
                                     triple_flag = 0;
                                     return {"triple_flag": triple_flag, "help_move": [i + _dmove[k][0] * 2 + _dmove[k2][0], j + _dmove[k][1] * 2 + _dmove[k2][1]]};
                                 }
                             }
+                        } else if (0 <= i + _dmove[k][0] && i + _dmove[k][0] < field["n"] &&
+                        0 <= j + _dmove[k][1] && j + _dmove[k][1] < field["m"] &&
+                        (field["gems_field"][i + _dmove[k][0]][j + _dmove[k][1]] == "bonus_1" ||
+                        field["gems_field"][i + _dmove[k][0]][j + _dmove[k][1]] == "bonus_2" ||
+                        field["gems_field"][i + _dmove[k][0]][j + _dmove[k][1]] == "bonus_3")) {
+                            triple_flag = 0;
+                            return {"triple_flag": triple_flag, "help_move": [i + _dmove[k][0], j + _dmove[k][1]]};
                         }
                     }
                 }
@@ -133,7 +141,8 @@ function _count_triple_field(field) {
                                 var k2 = (k + (k_point * 2 - 1) + 4) % 4;
                                 if (0 <= i + _dmove[k][0] + _dmove[k2][0] && i + _dmove[k][0] + _dmove[k2][0] < field['n'] &&
                                     0 <= j + _dmove[k][1] + _dmove[k2][1] && j + _dmove[k][1] + _dmove[k2][1] < field['m'] &&
-                                    field["gems_field"][i][j] == field["gems_field"][i + _dmove[k][0] + _dmove[k2][0]][j + _dmove[k][1] + _dmove[k2][1]]) {
+                                    field["gems_field"][i][j] == field["gems_field"][i + _dmove[k][0] + _dmove[k2][0]][j + _dmove[k][1] + _dmove[k2][1]] &&
+                                    typeof(field["gems_field"][i + _dmove[k][0]][j + _dmove[k][1]]) == "number") {
                                     triple_flag = 0;
                                     return {"triple_flag": triple_flag, "help_move": [i + _dmove[k][0] + _dmove[k2][0], j + _dmove[k][1] + _dmove[k2][1]]};
                                 }
@@ -250,7 +259,8 @@ function recount_field(field) {
                         for (var k = 0; k < 4; ++k) {
                             if (0 <= pos[0] + _dmove[k][0] && pos[0] + _dmove[k][0] < field["n"] &&
                             0 <= pos[1] + _dmove[k][1] && pos[1] + _dmove[k][1] < field["m"] &&
-                            setfit[pos[0] + _dmove[k][0]][pos[1] + _dmove[k][1]] == 1) {
+                            setfit[pos[0] + _dmove[k][0]][pos[1] + _dmove[k][1]] == 1 &&
+                            field["gems_field"][pos[0] + _dmove[k][0]][pos[1] + _dmove[k][1]] == field["gems_field"][pos[0]][pos[1]]) {
                                 stack.push([pos[0] + _dmove[k][0], pos[1] + _dmove[k][1]]);
                                 cnt += 1;
                             }
