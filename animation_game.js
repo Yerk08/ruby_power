@@ -28,12 +28,14 @@ const score_div = document.getElementById("score");
 const restart_button = document.getElementById("restart_button");
 const stone_counter = document.getElementById("stone_counter");
 const shield_counter = document.getElementById("shield_counter");
+const next_button = document.getElementById("next_button");
+const prev_button = document.getElementById("prev_button");
 var field = {};
 
 var shield_elms = [], gems_elms = [], black_paper = undefined, left_paper = undefined, right_paper = undefined;
 var tile_size = 0;
 
-var can_play = false;
+var can_play = false, is_win = false;
 
 var last_click = [-1, -1];
 var is_touch_pad = false;
@@ -73,6 +75,10 @@ function _review_field() {
                 stone_counter.style.left = "40px";
                 shield_counter.style.top = "230px";
                 shield_counter.style.left = "40px";
+                next_button.style.top = "310px";
+                next_button.style.left = "40px";
+                prev_button.style.top = "390px";
+                prev_button.style.left = "40px";
                 left_paper = document.createElement("div");
                 left_paper.style.top = `${margin_top}px`;
                 left_paper.style.left = `${0}px`;
@@ -95,6 +101,10 @@ function _review_field() {
                 stone_counter.style.left = "235px";
                 shield_counter.style.top = "0px";
                 shield_counter.style.left = "310px";
+                next_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+                next_button.style.left = "10px";
+                prev_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+                prev_button.style.left = "90px";
                 left_paper = document.createElement("div");
                 left_paper.style.top = `${0}px`;
                 left_paper.style.left = `${margin_left}px`;
@@ -115,10 +125,10 @@ function _review_field() {
             if (field["gems_field"][i][j] != "empty") {
                 var elm2 = document.createElement("img");
                 elm2.src = elms_to_picture[field["gems_field"][i][j]];
-                elm2.style.width = `${tile_size - 6}px`;
-                elm2.style.height = `${tile_size - 6}px`;
-                elm2.style.top = `${i * tile_size + 3 + margin_top}px`;
-                elm2.style.left = `${j * tile_size + 3 + margin_left}px`;
+                elm2.style.width = `${tile_size - 8}px`;
+                elm2.style.height = `${tile_size - 8}px`;
+                elm2.style.top = `${i * tile_size + 4 + margin_top}px`;
+                elm2.style.left = `${j * tile_size + 4 + margin_left}px`;
                 gems_field_div.appendChild(elm2);
                 gems_elms[i][j] = elm2;
 
@@ -251,16 +261,16 @@ function show_move_gems(field_new, move_list) {
             gems_elms[r2][c2] = elm2;
             update_animation_list_1.push(elm2);
             ((elm2) => {setTimeout(() => {
-                elm2.style.width = `${tile_size + 6}px`;
-                elm2.style.height = `${tile_size + 6}px`;
+                elm2.style.width = `${tile_size + 8}px`;
+                elm2.style.height = `${tile_size + 8}px`;
                 elm2.style.top = `${parseFloat(elm2.style.top.slice(0, -2)) - tile_size / 2 - 3}px`;
                 elm2.style.left = `${parseFloat(elm2.style.left.slice(0, -2)) - tile_size / 2 - 3}px`;
             }, 30)})(elm2);
             ((elm2) => {setTimeout(() => {
-                elm2.style.width = `${tile_size - 6}px`;
-                elm2.style.height = `${tile_size - 6}px`;
-                elm2.style.top = `${parseFloat(elm2.style.top.slice(0, -2)) + 6}px`;
-                elm2.style.left = `${parseFloat(elm2.style.left.slice(0, -2)) + 6}px`;
+                elm2.style.width = `${tile_size - 8}px`;
+                elm2.style.height = `${tile_size - 8}px`;
+                elm2.style.top = `${parseFloat(elm2.style.top.slice(0, -2)) + 8}px`;
+                elm2.style.left = `${parseFloat(elm2.style.left.slice(0, -2)) + 8}px`;
             }, wait_time)})(elm2);
         } else if (c2 == -1) {
             gems_elms[r1][c1].style.width = "0px";
@@ -273,10 +283,10 @@ function show_move_gems(field_new, move_list) {
         } else if (r1 < 0) {
             var elm2 = document.createElement("img");
             elm2.src = elms_to_picture[move_list[ind][2]];
-            elm2.style.width = `${tile_size - 6}px`;
-            elm2.style.height = `${tile_size - 6}px`;
-            elm2.style.top = `${r1 * tile_size + 3 + margin_top}px`;
-            elm2.style.left = `${c2 * tile_size + 3 + margin_left}px`;
+            elm2.style.width = `${tile_size - 8}px`;
+            elm2.style.height = `${tile_size - 8}px`;
+            elm2.style.top = `${r1 * tile_size + 4 + margin_top}px`;
+            elm2.style.left = `${c2 * tile_size + 4 + margin_left}px`;
             gems_field_div.appendChild(elm2);
             gems_elms[r2][c2] = elm2;
             update_animation_list_2.push([r2, elm2]);
@@ -292,7 +302,7 @@ function show_move_gems(field_new, move_list) {
         }
     }
     setTimeout(() => update_animation_list_2.forEach(element => {
-        element[1].style.top = `${element[0] * tile_size + 3 + margin_top}px`;
+        element[1].style.top = `${element[0] * tile_size + 4 + margin_top}px`;
     }), 30);
 }
 
@@ -308,21 +318,78 @@ function swap_two_elems(pos1, pos2) {
     gems_elms[pos2[0]][pos2[1]] = elm;
 }
 
+
 function show_score_and_save_game() {
     localStorage.setItem("last_game", JSON.stringify(field));
     score_div.innerText = field["score"];
     score_div.style.fontSize = `${Math.min(200 / (field["score"].toString().length), 50)}px`;
+    var stone_cnt = field["stones_number"], shield_cnt = 0;
     for (var i = 0; i < field["n"]; ++i) {
         for (var j = 0; j < field["m"]; ++j) {
+            shield_cnt += field["shield_field"][i][j];
+            if (field["gems_field"][i][j] == "stone" || field["gems_field"][i][j] == "bomb") {
+                ++stone_cnt;
+            }
         }
+    }
+    stone_counter.innerText = stone_cnt;
+    shield_counter.innerText = shield_cnt;
+    if (stone_cnt == 0 && shield_cnt == 0 && !is_win) {
+        is_win = true;
+        stone_counter.style.opacity = "0";
+        shield_counter.style.opacity = "0";
+    } else if (!is_win) {
+        stone_counter.style.opacity = "1";
+        shield_counter.style.opacity = "1";
     }
 }
 
 function restart_game() {
+    is_win = false;
     field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
-    update_all_field();
-    setTimeout(() => after_move(), wait_time);
+    for (var i = 0; i < gems_elms.length; ++i) {
+        for (var j = 0; j < gems_elms[0].length; ++j) {
+            if (shield_elms[i][j] != undefined) {
+                shield_field_div.removeChild(shield_elms[i][j]);
+            }
+            if (gems_elms[i][j] != undefined) {
+                gems_field_div.removeChild(gems_elms[i][j]);
+            }
+        }
+    }
+    start_play_game();
 }
+
+function update_buttons() {
+    if (JSON.parse(localStorage.getItem("last_field")) + 1 < all_fields.length) {
+        next_button.style.opacity = "1";
+    } else {
+        next_button.style.opacity = "0";
+    }
+    if (JSON.parse(localStorage.getItem("last_field")) - 1 >= 0) {
+        prev_button.style.opacity = "1";
+    } else {
+        prev_button.style.opacity = "0";
+    }
+}
+function next_field() {
+    if (JSON.parse(localStorage.getItem("last_field")) + 1 < all_fields.length) {
+        localStorage.setItem("last_field", JSON.stringify(JSON.parse(localStorage.getItem("last_field")) + 1));
+        field_base = all_fields[JSON.parse(localStorage.getItem("last_field"))];
+        restart_game();
+    }
+    update_buttons();
+}
+function prev_field() {
+    if (JSON.parse(localStorage.getItem("last_field")) - 1 >= 0) {
+        localStorage.setItem("last_field", JSON.stringify(JSON.parse(localStorage.getItem("last_field")) - 1));
+        field_base = all_fields[JSON.parse(localStorage.getItem("last_field"))];
+        restart_game();
+    }
+    update_buttons();
+}
+
+
 
 var was_bad = false;
 var help_move, last_after_move;
@@ -335,8 +402,8 @@ function after_move() {
                 }
             }
         }
-        update_all_field();
         show_score_and_save_game();
+        update_all_field();
         return;
     }
     last_after_move = Date.now();
@@ -499,11 +566,21 @@ window.addEventListener("touchstart", press_down_mouse);
 window.addEventListener("touchend", press_up_mouse);
 
 
-field_base = get_empty_field(8, 10, 5, 2, 8, 10);
+all_fields = [get_empty_field(8, 8, 4, 2, 10, 10), get_empty_field(6, 6, 5, 1, 1, 10, false), get_empty_field(10, 10, 8, 2, 100, 20)];
+if (localStorage.getItem("last_field") == undefined) {
+    localStorage.setItem("last_field", "0");
+}
+
+field_base = all_fields[JSON.parse(localStorage.getItem("last_field"))];
+
+
 if (localStorage.getItem("last_game") == undefined) {
+    is_win = false;
     field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
     start_play_game();
 } else {
+    is_win = false;
     field = JSON.parse(localStorage.getItem("last_game"));
     start_play_game(field);
 }
+update_buttons();

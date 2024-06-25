@@ -30,15 +30,35 @@ img {
 	width: 80px;
 	height: 80px;
 }
+#next_button {
+	width: 80px;
+	height: 80px;
+	opacity: 0;
+}
+#prev_button {
+	width: 80px;
+	height: 80px;
+	opacity: 0;
+}
 #stone_counter {
+	background-image: url("images/stone.jpg");
+    background-size: contain;
 	width: 70px;
 	height: 70px;
-	color: bisque;
-	font-size: 50px;
+	line-height: 70px;
+	color:snow;
+	text-shadow: salmon 2px 2px;
+	font-size: 35px;
+	opacity: 0;
 }
 #shield_counter {
+	background-image: url("images/shield_1.jpg");
+    background-size: contain;
 	width: 70px;
 	height: 70px;
-	color: bisque;
-	font-size: 50px;
+	line-height: 70px;
+	color: snow;
+	text-shadow: salmon 2px 2px;
+	font-size: 35px;
+	opacity: 0;
 }

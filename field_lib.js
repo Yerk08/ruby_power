@@ -285,7 +285,9 @@ function recount_field(field) {
         var rubies_scores = [];
         for (var i = 0; i < field["n"]; ++i) {
             for (var j = 0; j < field["m"]; ++j) {
+                var last_removed;
                 if (ct["field"][i][j]) {
+                    last_removed = field["gems_field"][i][j];
                     move_list.push([[i, j], [-1, -1]]);
                     if (field["gems_field"][i][j] == -1) {
                         field["score"] += score_rules["ruby_break"];
@@ -304,7 +306,7 @@ function recount_field(field) {
                 } else if (setfit[i][j] == -5) {
                     move_list.push([[-1, -1], [i, j], "bonus_2"]);
                     field["gems_field"][i][j] = "bonus_2";
-                } else if (setfit[i][j] <= -6) {
+                } else if (setfit[i][j] <= -6 && last_removed != -1) {
                     move_list.push([[-1, -1], [i, j], -1]);
                     field["gems_field"][i][j] = -1;
                     field["score"] += score_rules["ruby_get"];
