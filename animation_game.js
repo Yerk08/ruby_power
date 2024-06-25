@@ -17,6 +17,8 @@ const elms_to_picture = {
     "empty": "images/empty.jpg"
 };
 const elms_shield_to_picture = ["images/shield_0.jpg","images/shield_1.jpg","images/shield_2.jpg","images/shield_3.jpg"];
+const wait_time = 300;
+const help_wait_time = 60000;
 
 const shield_field_div = document.getElementById("shield_field");
 const shield_field_was_div = document.getElementById("shield_field_was");
@@ -27,7 +29,6 @@ var field = {};
 
 var shield_elms = [], gems_elms = [], black_paper = undefined, left_paper = undefined, right_paper = undefined;
 var tile_size = 0;
-const wait_time = 300;
 
 var can_play = false;
 
@@ -136,10 +137,10 @@ function update_all_field() {
         margin_top = 0;
         tile_size = Math.min(window.innerHeight / field["n"], window.innerWidth / field["m"]);
         if (window.innerHeight / field["n"] < window.innerWidth / field["m"]) {
-            margin_left = 100;
+            margin_left = 200;
             tile_size = Math.min(window.innerHeight / field["n"], (window.innerWidth - margin_left) / field["m"]);
         } else {
-            margin_top = 100;
+            margin_top = 200;
             tile_size = Math.min((window.innerHeight - margin_top) / field["n"], window.innerWidth / field["m"]);
         }
         _review_field();
@@ -295,7 +296,7 @@ function swap_two_elems(pos1, pos2) {
 
 
 var was_bad = false;
-var help_move;
+var help_move, last_after_move;
 function after_move() {
     if (field["score"] < 0) {
         for (var i = 0; i < field["n"]; ++i) {
@@ -308,6 +309,7 @@ function after_move() {
         update_all_field();
         return;
     }
+    last_after_move = Date.now();
     ct = recount_field(field);
     if (ct["triple_flag"] == 1) {
         was_bad = false;
@@ -335,6 +337,13 @@ function after_move() {
     } else {
         was_bad = false;
         can_play = true;
+        help_move = ct["help_move"];
+        setTimeout(() => {
+            if (Date.now() - last_after_move >= help_wait_time && last_click[0] == -1) {
+                last_click = help_move;
+                gems_elms[last_click[0]][last_click[1]].style.transform = "scale(2.0)";
+            }
+        }, help_wait_time + 30);
     }
 }
 
@@ -457,5 +466,5 @@ window.addEventListener("touchstart", press_down_mouse);
 window.addEventListener("touchend", press_up_mouse);
 
 
-field_base = get_empty_field(9, 9, 4, 2, 8, 10);
+field_base = get_empty_field(9, 9, 5, 2, 8, 10);
 start_play_game(field_base);

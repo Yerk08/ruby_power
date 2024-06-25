@@ -270,6 +270,7 @@ function recount_field(field) {
                 }
             }
         }
+        var rubies_scores = [];
         for (var i = 0; i < field["n"]; ++i) {
             for (var j = 0; j < field["m"]; ++j) {
                 if (ct["field"][i][j]) {
@@ -295,7 +296,7 @@ function recount_field(field) {
                     move_list.push([[-1, -1], [i, j], -1]);
                     field["gems_field"][i][j] = -1;
                     field["score"] += score_rules["ruby_get"];
-                    score_add.push([i, j, score_rules["ruby_get"]]);
+                    rubies_scores.push(JSON.stringify([i, j]));
                 } else if (ct["field"][i][j] && field["was_bonus_3"] == undefined && field["score"] > 3000) {
                     move_list.push([[-1, -1], [i, j], "bonus_3"]);
                     field["gems_field"][i][j] = "bonus_3";
@@ -309,9 +310,14 @@ function recount_field(field) {
                 if (field["gems_field"][i][j] != "empty" && field["gems_field"][i][j] != "removed") {
                     if (last_not_empty.length != 0) {
                         move_list.push([[i, j], [last_not_empty[0], j]]);
+                        if (rubies_scores.includes(JSON.stringify([i, j]))) {
+                            score_add.push([last_not_empty[0], j, score_rules["ruby_get"]]);
+                        }
                         field["gems_field"][last_not_empty[0]][j] = field["gems_field"][i][j];
                         last_not_empty.push(i);
                         last_not_empty.shift();
+                    } else if (rubies_scores.includes(JSON.stringify([i, j]))) {
+                        score_add.push([i, j, score_rules["ruby_get"]]);
                     }
                 } else if (field["gems_field"][i][j] == "removed") {
                     last_not_empty.push(i);
