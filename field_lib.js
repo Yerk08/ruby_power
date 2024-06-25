@@ -489,11 +489,9 @@ function swap_two_elems_on_field(field, pos1, pos2) {
                     for (var j = 0; j < field["m"]; ++j) {
                         if (typeof(field["gems_field"][i][j]) == "number" && field["gems_field"][i][j] != -1 && Math.random() * 4 < 1) {
                             field["gems_field"][i][j] = "removed";
-                            if (field["shield_field"][i][j] > 0) {
-                                field["score"] += score_rules["pop_shield"];
-                                score_add.push([i, j, score_rules["pop_shield"]]);
-                                field["shield_field"][i][j] -= 1;
-                            }
+                            field["score"] += score_rules["pop_shield"] * field["shield_field"][i][j];
+                            score_add.push([i, j, score_rules["pop_shield"] * field["shield_field"][i][j]]);
+                            field["shield_field"][i][j] = 0;
                         }
                     }
                 }
