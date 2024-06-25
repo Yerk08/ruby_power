@@ -394,7 +394,7 @@ function press_down_mouse(event) {
                 last_click = pos;
                 gems_elms[pos[0]][pos[1]].style.transform = "scale(2.0)";
             } else {
-                last_click = -1;
+                last_click = [-1, -1];
             }
         } else {
             if (pos[0] > last_click[0]) {
@@ -429,7 +429,7 @@ function press_up_mouse(event) {
                     last_click = pos;
                     gems_elms[pos[0]][pos[1]].style.transform = "scale(2.0)";
                 } else {
-                    last_click = -1;
+                    last_click = [-1, -1];
                 }
             } else {
                 if (pos[0] > last_click[0]) {
