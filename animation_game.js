@@ -297,6 +297,17 @@ function swap_two_elems(pos1, pos2) {
 var was_bad = false;
 var help_move;
 function after_move() {
+    if (field["score"] < 0) {
+        for (var i = 0; i < field["n"]; ++i) {
+            for (var j = 0; j < field["m"]; ++j) {
+                if (typeof(field["gems_field"][i][j]) == "number") {
+                    field["gems_field"][i][j] = "gem";
+                }
+            }
+        }
+        update_all_field();
+        return;
+    }
     ct = recount_field(field);
     if (ct["triple_flag"] == 1) {
         was_bad = false;
@@ -386,6 +397,15 @@ function press_down_mouse(event) {
                 last_click = -1;
             }
         } else {
+            if (pos[0] > last_click[0]) {
+                pos = [last_click[0] + 1, last_click[1]];
+            } else if (pos[0] < last_click[0]) {
+                pos = [last_click[0] - 1, last_click[1]];
+            } else if (pos[1] > last_click[1]) {
+                pos = [last_click[0], last_click[1] + 1];
+            } else if (pos[1] < last_click[1]) {
+                pos = [last_click[0], last_click[1] - 1];
+            }
             gems_elms[last_click[0]][last_click[1]].style.transform = "";
             if (Math.abs(last_click[0] - pos[0]) + Math.abs(last_click[1] - pos[1]) == 1 && (typeof(field["gems_field"][pos[0]][pos[1]]) == "number" || field["gems_field"][pos[0]][pos[1]] == "bonus_1" || field["gems_field"][pos[0]][pos[1]] == "bonus_2" || field["gems_field"][pos[0]][pos[1]] == "bonus_3")) {
                 my_move(last_click, pos);
@@ -412,6 +432,15 @@ function press_up_mouse(event) {
                     last_click = -1;
                 }
             } else {
+                if (pos[0] > last_click[0]) {
+                    pos = [last_click[0] + 1, last_click[1]];
+                } else if (pos[0] < last_click[0]) {
+                    pos = [last_click[0] - 1, last_click[1]];
+                } else if (pos[1] > last_click[1]) {
+                    pos = [last_click[0], last_click[1] + 1];
+                } else if (pos[1] < last_click[1]) {
+                    pos = [last_click[0], last_click[1] - 1];
+                }
                 gems_elms[last_click[0]][last_click[1]].style.transform = "";
                 if (Math.abs(last_click[0] - pos[0]) + Math.abs(last_click[1] - pos[1]) == 1 && (typeof(field["gems_field"][pos[0]][pos[1]]) == "number" || field["gems_field"][pos[0]][pos[1]] == "bonus_1" || field["gems_field"][pos[0]][pos[1]] == "bonus_2" || field["gems_field"][pos[0]][pos[1]] == "bonus_3")) {
                     my_move(last_click, pos);
