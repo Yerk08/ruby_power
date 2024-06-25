@@ -5,7 +5,6 @@ if ("serviceWorker" in navigator) {
 const cacheName = "ruby_power_cache-v1.2";
 const appShellFiles = [
   "index.html",
-  "help.html",
   "cache_saver.js",
   "animation_game.js",
   "field_lib.js",
@@ -39,7 +38,14 @@ const appShellFiles = [
   "images/edit_button.png",
   "images/cart_add.png",
   "images/cart_remove.png",
-  "images/help_button.png"
+  
+  "images/help_button.png",
+  "help.html",
+  "images/help/help_image_1.png",
+  "images/help/help_image_2.png",
+  "images/help/help_image_3.png",
+  "images/help/help_image_4.png",
+  "images/help/help_image_5.png"
 ];
 
 self.addEventListener("install", (event) => {

@@ -7,10 +7,70 @@
 		<script src="cache_saver.js"></script>
     </head>
     <body>
+        <img id="help_button" src="images/arrow_left.png" onclick="window.location.replace('/')" style="position: relative;"></img>
         <div style="position: relative;">
-            <img id="help_button" src="images/arrow_left.png" onclick="window.location.replace('/')" style="position: relative;"></img>
             <h1 style="color:snow;">Игра "сила рубина"</h1>
-            <p style="color:snow;">HEllo world!</p>
+            <p style="color:snow;">Это игра типа "3 в ряд". Вы можете менять местами два рядом стоящих драгоценных камня. Каждые 3 идущие подряд в ряду будут удаляться и те что сверху будут падать до этого места. <br> Вы проиграете если у вас станет отрицательный счет, или у вас не останется ходов (и при этом изменение драгоценных камней не исправит ситуации) <br> Всего есть 8 драгоценных камней, не во всех уровнях есть все, чем сложнее уровень, тем меньше дальних камней (первые 4 есть во всех уровнях):</p>
+            <img src="images/gem0.png" style="position: relative; width: 70px;">
+            <img src="images/gem1.png" style="position: relative; width: 70px;">
+            <img src="images/gem2.png" style="position: relative; width: 70px;">
+            <img src="images/gem3.png" style="position: relative; width: 70px;">
+            <img src="images/gem4.png" style="position: relative; width: 70px;">
+            <b style="color:snow;">Серебрянный камень:</b>
+            <img src="images/gem_silver.png" style="position: relative; width: 70px;">
+            <b style="color:snow;">Золотой камень:</b>
+            <img src="images/gem_gold.png" style="position: relative; width: 70px;">
+            <b style="color:snow;">Черный алмаз:</b>
+            <img src="images/gem_black_diamond.png" style="position: relative; width: 70px;">
+            <p style="color:snow; margin-top: 100px;">Вам будут мешать камни, взрывающиеся камни, а также пустые места, вот они слева направо:</p>
+            <img src="images/stone.jpg" style="position: relative; width: 70px;">
+            <img src="images/bomb.jpg" style="position: relative; width: 70px;">
+            <img src="images/empty.jpg" style="position: relative; width: 70px;">
+            <p style="color:snow;">Вы не можете никак сдвинуть камень, но вы можете его "уронить" - сделать так чтобы он дошел до нижней границы, а затем упал за нее из поля <br> то же можно сделать со взрывающимся камнем <br> С пустотой вы ничего не сможете сделать, но все "проскакивает" сквозь нее</p>
+            <p style="color:snow; margin-top: 100px;">За камнями, драгоценными камнями, рубинами и т.д. есть стена. Каждое удаление будет рушить стены и давать вам очки, после чего будет появляться стена меньшей плотности, в данном порядке</p>
+            <img src="images/shield_3.jpg" style="position: relative; width: 70px;">
+            <img src="images/shield_2.jpg" style="position: relative; width: 70px;">
+            <img src="images/shield_1.jpg" style="position: relative; width: 70px;">
+            <p style="color:snow;">Стена самого нижнего уровня не будет ломаться, но также и не будет давать счет, она является базовой:</p>
+            <img src="images/shield_0.jpg" style="position: relative; width: 70px;">
+            <p style="color:snow; margin-top: 100px;">Помимо этого, если вы соберете не 3 идущие подряд камни, а 4, то вы получите бонус-вертолет:</p>
+            <img src="images/bonus_1.png" style="position: relative; width: 70px;">
+            <p style="color:snow;">При его применении (обмене с драгоценным камнем) он уничтожает всё, кроме камней в радиусе 1 (уничтожение взрывающегося камня забирает у вас очень много очков) <br> Отдельно этот бонус имеет особенность - если вы соберете три бонуса в ряд, так что последний будет сдвинут вами в этот ряд, то радиус уничтожения увеличится на 1 для последнего бонуса, к примеру:</p>
+            <img src="images/help/help_image_1.png" style="position: relative; width: 280px;">
+            <p style="color:snow;">Сделает радиус уничтожения равным 2 (то есть квадрат 5x5)</p>
+            <img src="images/help/help_image_2.png" style="position: relative; width: 280px;">
+            <p style="color:snow;">А этот, сделает радиус уничтожения равным 3 (то есть квадрат 7x7)</p>
+            <p style="color:snow; margin-top: 100px;">Если вы соберете 5 идущих подряд камней, то вы получите бонус-молот:</p>
+            <img src="images/bonus_2.png" style="position: relative; width: 70px;">
+            <p style="color:snow;">При его применении он уничтожает строку и столбец, до ячеек которых он может дотянуться <br> Например в примере ниже, при применении бонуса налево, камень и клетка слева от камня не уничтожатся; вся остальная строчка и весь столбец уничтожатся полностью</p>
+            <img src="images/help/help_image_3.png" style="position: relative; width: 350px;">
+            <p style="color:snow; margin-top: 100px;">Если вы получите счет больше 3000, вы получите бонус-перестройку (он дается всего единожды за игру):</p>
+            <img src="images/bonus_3.png" style="position: relative; width: 70px;">
+            <p style="color:snow;">При его применении он уничтожает случайную четверть драгоценных камней (при этом он не уничтожает рубины)</p>
+            <p style="color:snow; margin-top: 100px;">Если вы соберете 6 и больше, то вы получите рубин (и хорошее количество очков):</p>
+            <img src="images/ruby.png" style="position: relative; width: 70px;">
+            <p style="color:snow;">Он является драгоценным камнем и его можно двигать обычным образом. Помимо этого он как и обычный камень может упасть с поля (будьте осторожны - в таком случае вы теряете те очки, что он стоит). <br> Более того, его можно уничтожить бонусом-вертолетом и бонусом-молотом, за что вы также потеряете и рубин и очки. <br> Если вы соедините три или более подряд идущих рубинов, то вы получите по многу очков за каждый уничтоженный, этим они и ценны</p>
+        </div>
+        <div style="position: relative; margin-top: 250px;">
+            <p style="color:snow;">В самой игре у вас слева (или сверху) виден счет, кнопка перезапуска уровня:</p>
+            <img src="images/restart_button.png" style="position: relative; width: 70px;">
+            <p style="color:snow;">Затем находятся остатки по карте - количество оставшихся камней (сумма по тем что есть на карте и ещё должны выпасть), а также количество стен (двойная стена считается как 2, тройная - 3)</p>
+            <img src="images/help/help_image_4.png" style="position: relative; width: 70px;">
+            <p style="color:snow; margin-top: 100px;">Затем находится кнопка редактирования уровня:</p>
+            <img src="images/edit_button.png" style="position: relative; width: 70px;">
+            <p style="color:snow;">Она позволяет вам слегка отредактировать уровень:</p>
+            <img src="images/help/help_image_5.png" style="position: relative; width: 260px;">
+            <p style="color:snow;">Первая кнопка создает новый стандартный уровень в конец и выходит из режима редактирования:</p>
+            <img src="images/card_add.png" style="position: relative; width: 70px;">
+            <p style="color:snow;">Вторая кнопка восстанавливает начальный список уровней и выходит из режима редактирования:</p>
+            <img src="images/restart_button.png" style="position: relative; width: 70px;">
+			<p style="color:snow;">Следующие кнопки позволяют создать базу уровня - при нажатии на них вы можете "рисовать" данной клеткой - клетка поля на которую вы нажимаете становится выбранной <br> Все тайлы вам уже знакомы кроме нижнего, он обозначает драгоценный камень любого типа (кроме рубина, так как он необычен) и заменяется при игре на случайный <br> после того как вы закончили, нажмите снова на кнопку редактирования и изменения сохранятся</p>
+            <img src="images/gem.png" style="position: relative; width: 70px;">
+			<p style="color:snow; margin-top: 100px;">Затем находится кнопки смены текущего уровня - влево и вправо, а также кнопка вызова этой справки</p>
+            <img src="images/arrow_left.png" style="position: relative; width: 70px;">
+            <img src="images/arrow_right.png" style="position: relative; width: 70px;">
+            <img src="images/help_button.png" style="position: relative; width: 70px;">
+			<p style="color:snow;">Надеемся что вам понравится эта игра; возможно в будущем тут появятся бОльшие возможности редактирования уровней, возможности обмена уровнями, сюжет, а также более удобная графика</p>
         </div>
     </body>
 </html>
