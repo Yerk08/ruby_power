@@ -25,13 +25,15 @@ const shield_field_was_div = document.getElementById("shield_field_was");
 const gems_field_div = document.getElementById("gems_field");
 const animation_field_div = document.getElementById("animation_field");
 const score_div = document.getElementById("score");
+const restart_button = document.getElementById("restart_button");
+const stone_counter = document.getElementById("stone_counter");
+const shield_counter = document.getElementById("shield_counter");
 var field = {};
 
 var shield_elms = [], gems_elms = [], black_paper = undefined, left_paper = undefined, right_paper = undefined;
 var tile_size = 0;
 
 var can_play = false;
-
 
 var last_click = [-1, -1];
 var is_touch_pad = false;
@@ -65,26 +67,38 @@ function _review_field() {
                 animation_field_div.removeChild(right_paper);
             }
             if (margin_top == 0) {
+                restart_button.style.top = "70px";
+                restart_button.style.left = "35px";
+                stone_counter.style.top = "150px";
+                stone_counter.style.left = "40px";
+                shield_counter.style.top = "230px";
+                shield_counter.style.left = "40px";
                 left_paper = document.createElement("div");
                 left_paper.style.top = `${margin_top}px`;
                 left_paper.style.left = `${0}px`;
                 left_paper.style.width = `${margin_left + 1}px`;
-                left_paper.style.height = `${window.innerHeight}px`;
+                left_paper.style.height = `${window.innerHeight + 1}px`;
                 left_paper.style.backgroundColor = "black";
                 animation_field_div.appendChild(left_paper);
 
                 right_paper = document.createElement("div");
                 right_paper.style.top = `${0}px`;
                 right_paper.style.left = `${field['m'] * tile_size + margin_left}px`;
-                right_paper.style.width = `${window.innerWidth}px`;
-                right_paper.style.height = `${window.innerHeight}px`;
+                right_paper.style.width = `${window.innerWidth + 1}px`;
+                right_paper.style.height = `${window.innerHeight + 1}px`;
                 right_paper.style.backgroundColor = "black";
                 animation_field_div.appendChild(right_paper);
             } else {
+                restart_button.style.top = "-5px";
+                restart_button.style.left = "150px";
+                stone_counter.style.top = "0px";
+                stone_counter.style.left = "235px";
+                shield_counter.style.top = "0px";
+                shield_counter.style.left = "310px";
                 left_paper = document.createElement("div");
                 left_paper.style.top = `${0}px`;
                 left_paper.style.left = `${margin_left}px`;
-                left_paper.style.width = `${window.innerWidth}px`;
+                left_paper.style.width = `${window.innerWidth + 1}px`;
                 left_paper.style.height = `${margin_top + 1}px`;
                 left_paper.style.backgroundColor = "black";
                 animation_field_div.appendChild(left_paper);
@@ -92,8 +106,8 @@ function _review_field() {
                 right_paper = document.createElement("div");
                 right_paper.style.top = `${field['n'] * tile_size + margin_top}px`;
                 right_paper.style.left = `${0}px`;
-                right_paper.style.width = `${window.innerWidth}px`;
-                right_paper.style.height = `${window.innerHeight}px`;
+                right_paper.style.width = `${window.innerWidth + 1}px`;
+                right_paper.style.height = `${window.innerHeight + 1}px`;
                 right_paper.style.backgroundColor = "black";
                 animation_field_div.appendChild(right_paper);
             }
@@ -137,10 +151,10 @@ function update_all_field() {
         margin_top = 0;
         tile_size = Math.min(window.innerHeight / field["n"], window.innerWidth / field["m"]);
         if (window.innerHeight / field["n"] < window.innerWidth / field["m"]) {
-            margin_left = 200;
+            margin_left = 150;
             tile_size = Math.min(window.innerHeight / field["n"], (window.innerWidth - margin_left) / field["m"]);
         } else {
-            margin_top = 200;
+            margin_top = 70;
             tile_size = Math.min((window.innerHeight - margin_top) / field["n"], window.innerWidth / field["m"]);
         }
         _review_field();
@@ -294,6 +308,21 @@ function swap_two_elems(pos1, pos2) {
     gems_elms[pos2[0]][pos2[1]] = elm;
 }
 
+function show_score_and_save_game() {
+    localStorage.setItem("last_game", JSON.stringify(field));
+    score_div.innerText = field["score"];
+    score_div.style.fontSize = `${Math.min(200 / (field["score"].toString().length), 50)}px`;
+    for (var i = 0; i < field["n"]; ++i) {
+        for (var j = 0; j < field["m"]; ++j) {
+        }
+    }
+}
+
+function restart_game() {
+    field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
+    update_all_field();
+    setTimeout(() => after_move(), wait_time);
+}
 
 var was_bad = false;
 var help_move, last_after_move;
@@ -307,6 +336,7 @@ function after_move() {
             }
         }
         update_all_field();
+        show_score_and_save_game();
         return;
     }
     last_after_move = Date.now();
@@ -317,12 +347,14 @@ function after_move() {
         show_move_gems(ct["field"], ct["move_list"])
         update_shield_field(field, ct["field"]);
         field = ct["field"];
+        show_score_and_save_game();
         setTimeout(() => after_move(), wait_time * 2);
     } else if (ct["triple_flag"] == -1) {
         if (was_bad) {
             was_bad = true;
             field = update_field_from_impossible_to_playable(field, field["n"] * field["m"] * 20);
             update_all_field();
+            show_score_and_save_game();
             setTimeout(() => after_move(), wait_time + 100);
         } else {
             for (var i = 0; i < field["n"]; ++i) {
@@ -332,9 +364,11 @@ function after_move() {
                     }
                 }
             }
+            show_score_and_save_game();
             update_all_field();
         }
     } else {
+        show_score_and_save_game();
         was_bad = false;
         can_play = true;
         help_move = ct["help_move"];
@@ -371,8 +405,7 @@ function my_move(pos1, pos2) {
     }, wait_time);
 }
 
-function start_play_game(field_base) {
-    field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
+function start_play_game() {
     gems_elms = [];
     shield_elms = [];
     for (var i = 0; i < field["n"]; ++i) {
@@ -467,8 +500,10 @@ window.addEventListener("touchend", press_up_mouse);
 
 
 field_base = get_empty_field(8, 10, 5, 2, 8, 10);
-for (var i = 3; i < field_base["m"] - 3; ++i) {
-    field_base["gems_field"][3][i] = "empty";
-    field_base["gems_field"][4][i] = "empty";
+if (localStorage.getItem("last_game") == undefined) {
+    field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
+    start_play_game();
+} else {
+    field = JSON.parse(localStorage.getItem("last_game"));
+    start_play_game(field);
 }
-start_play_game(field_base);

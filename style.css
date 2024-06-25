@@ -16,3 +16,29 @@ img {
 	transition: all 0.3s ease;
 	user-select: none;
 }
+
+#score {
+	width: 130px;
+	height: 40px;
+	top: 10px;
+	left: 10px;
+	color: cyan;
+	font-variant-numeric: slashed-zero;
+	text-shadow: blue 2px 2px;
+}
+#restart_button {
+	width: 80px;
+	height: 80px;
+}
+#stone_counter {
+	width: 70px;
+	height: 70px;
+	color: bisque;
+	font-size: 50px;
+}
+#shield_counter {
+	width: 70px;
+	height: 70px;
+	color: bisque;
+	font-size: 50px;
+}
