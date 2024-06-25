@@ -219,7 +219,6 @@ function recount_field(field) {
                 }
             }
             for (var i = 0; i < last_not_empty.length; ++i) {
-                move_list.push([[-i - 1, j], [last_not_empty[i], j]]);
                 if (Math.random() * field["stones_random"] < 1 && field["stones_number"] > 0) {
                     if (Math.random() * 4 < 1 && field["has_bombs"]) {
                         field["gems_field"][last_not_empty[i]][j] = "bomb";
@@ -231,6 +230,7 @@ function recount_field(field) {
                 } else {
                     field["gems_field"][last_not_empty[i]][j] = Math.floor(Math.random() * field["gems_number"]) % field["gems_number"];
                 }
+                move_list.push([[-i - 1, j], [last_not_empty[i], j], field["gems_field"][last_not_empty[i]][j]]);
             }
         }
         return {"triple_flag": 1, "field": field, "move_list": move_list, "score_add": score_add};
@@ -276,18 +276,18 @@ function recount_field(field) {
                     }
                 }
                 if (setfit[i][j] == -4) {
-                    move_list.push([[-1, -1], [i, j]]);
+                    move_list.push([[-1, -1], [i, j], "bonus_1"]);
                     field["gems_field"][i][j] = "bonus_1";
                 } else if (setfit[i][j] == -5) {
-                    move_list.push([[-1, -1], [i, j]]);
+                    move_list.push([[-1, -1], [i, j], "bonus_2"]);
                     field["gems_field"][i][j] = "bonus_2";
                 } else if (setfit[i][j] <= -6) {
-                    move_list.push([[-1, -1], [i, j]]);
+                    move_list.push([[-1, -1], [i, j], -1]);
                     field["gems_field"][i][j] = -1;
                     field["score"] += score_rules["ruby_get"];
                     score_add.push([i, j, score_rules["ruby_get"]]);
                 } else if (ct["field"][i][j] && field["was_bonus_3"] == undefined && field["score"] > 3000) {
-                    move_list.push([[-1, -1], [i, j]]);
+                    move_list.push([[-1, -1], [i, j], "bonus_3"]);
                     field["gems_field"][i][j] = "bonus_3";
                     field["was_bonus_3"] = true;
                 }
@@ -308,7 +308,6 @@ function recount_field(field) {
                 }
             }
             for (var i = 0; i < last_not_empty.length; ++i) {
-                move_list.push([[-i - 1, j], [last_not_empty[i], j]]);
                 if (Math.random() * field["stones_random"] < 1 && field["stones_number"] > 0) {
                     if (Math.random() * 4 < 1 && field["has_bombs"]) {
                         field["gems_field"][last_not_empty[i]][j] = "bomb";
@@ -320,6 +319,7 @@ function recount_field(field) {
                 } else {
                     field["gems_field"][last_not_empty[i]][j] = Math.floor(Math.random() * field["gems_number"]) % field["gems_number"];
                 }
+                move_list.push([[-i - 1, j], [last_not_empty[i], j], field["gems_field"][last_not_empty[i]][j]]);
             }
         }
         return {"triple_flag": ct["triple_flag"], "field": field, "move_list": move_list, "score_add": score_add};
