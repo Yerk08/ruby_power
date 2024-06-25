@@ -32,9 +32,12 @@ const wait_time = 300;
 var can_play = false;
 
 
+var last_click = [-1, -1];
+var is_touch_pad = false;
 var margin_left = 0, margin_top = 0;
 function _review_field() {
     last_click = [-1, -1];
+    is_touch_pad = false;
     for (var i = 0; i < field["n"]; ++i) {
         for (var j = 0; j < field["m"]; ++j) {
             if (shield_elms[i][j] != undefined) {
@@ -336,9 +339,14 @@ start_play_game(field_base);
 
 addEventListener("resize", update_all_field);
 
-var last_click = [-1, -1];
-onmousedown = (event) => {
-    var pos = [Math.floor((event.clientY - margin_top) / tile_size), Math.floor((event.clientX - margin_left) / tile_size)];
+function press_down_mouse(event) {
+    var pos = [-1, -1];
+    if (event.changedTouches == undefined && !is_touch_pad) {
+        var pos = [Math.floor((event.clientY - margin_top) / tile_size), Math.floor((event.clientX - margin_left) / tile_size)];
+    } else {
+        is_touch_pad = true;
+        var pos = [Math.floor((event.changedTouches[0].pageY - margin_top) / tile_size), Math.floor((event.changedTouches[0].pageX - margin_left) / tile_size)];
+    }
     if (0 <= pos[0] && pos[0] < field["n"] && 0 <= pos[1] && pos[1] < field["m"] && can_play) {
         if (last_click[0] == -1) {
             if (typeof(field["gems_field"][pos[0]][pos[1]]) == "number" || field["gems_field"][pos[0]][pos[1]] == "bonus_1" || field["gems_field"][pos[0]][pos[1]] == "bonus_2" || field["gems_field"][pos[0]][pos[1]] == "bonus_3") {
@@ -356,8 +364,14 @@ onmousedown = (event) => {
         }
     }
 }
-onmouseup = (event) => {
-    var pos = [Math.floor((event.clientY - margin_top) / tile_size), Math.floor((event.clientX - margin_left) / tile_size)];
+function press_up_mouse(event) {
+    var pos = [-1, -1];
+    if (event.changedTouches == undefined && !is_touch_pad) {
+        var pos = [Math.floor((event.clientY - margin_top) / tile_size), Math.floor((event.clientX - margin_left) / tile_size)];
+    } else {
+        is_touch_pad = true;
+        var pos = [Math.floor((event.changedTouches[0].pageY - margin_top) / tile_size), Math.floor((event.changedTouches[0].pageX - margin_left) / tile_size)];
+    }
     if (0 <= pos[0] && pos[0] < field["n"] && 0 <= pos[1] && pos[1] < field["m"] && can_play) {
         if (last_click[0] != -1 && (last_click[0] != pos[0] || last_click[1] != pos[1])) {
             if (last_click[0] == -1) {
@@ -377,3 +391,8 @@ onmouseup = (event) => {
         }
     }
 }
+
+onmousedown = press_down_mouse;
+onmouseup = press_up_mouse;
+window.addEventListener("touchstart", press_down_mouse);
+window.addEventListener("touchend", press_up_mouse);
