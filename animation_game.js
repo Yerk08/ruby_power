@@ -30,12 +30,13 @@ const stone_counter = document.getElementById("stone_counter");
 const shield_counter = document.getElementById("shield_counter");
 const next_button = document.getElementById("next_button");
 const prev_button = document.getElementById("prev_button");
+const edit_button = document.getElementById("edit_button");
 var field = {};
 
 var shield_elms = [], gems_elms = [], black_paper = undefined, left_paper = undefined, right_paper = undefined;
 var tile_size = 0;
 
-var can_play = false, is_win = false;
+var can_play = false, is_win = false, edit_mode = false;
 
 var last_click = [-1, -1];
 var is_touch_pad = false;
@@ -60,6 +61,7 @@ function _review_field() {
             black_paper.style.width = `${field['m'] * tile_size + 1}px`;
             black_paper.style.height = `${field['n'] * tile_size + 1}px`;
             black_paper.style.backgroundColor = "black";
+            black_paper.style.fontFamily = "";
             animation_field_div.appendChild(black_paper);
 
             if (left_paper != undefined) {
@@ -75,9 +77,11 @@ function _review_field() {
                 stone_counter.style.left = "40px";
                 shield_counter.style.top = "230px";
                 shield_counter.style.left = "40px";
-                next_button.style.top = "310px";
+                edit_button.style.top = "310px";
+                edit_button.style.left = "40px";
+                next_button.style.top = "390px";
                 next_button.style.left = "40px";
-                prev_button.style.top = "390px";
+                prev_button.style.top = "470px";
                 prev_button.style.left = "40px";
                 left_paper = document.createElement("div");
                 left_paper.style.top = `${margin_top}px`;
@@ -96,15 +100,17 @@ function _review_field() {
                 animation_field_div.appendChild(right_paper);
             } else {
                 restart_button.style.top = "-5px";
-                restart_button.style.left = "150px";
+                restart_button.style.left = "140px";
                 stone_counter.style.top = "0px";
-                stone_counter.style.left = "235px";
+                stone_counter.style.left = "225px";
                 shield_counter.style.top = "0px";
-                shield_counter.style.left = "310px";
+                shield_counter.style.left = "300px";
+                edit_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+                edit_button.style.left = "10px";
                 next_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
-                next_button.style.left = "10px";
+                next_button.style.left = "90px";
                 prev_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
-                prev_button.style.left = "90px";
+                prev_button.style.left = "170px";
                 left_paper = document.createElement("div");
                 left_paper.style.top = `${0}px`;
                 left_paper.style.left = `${margin_left}px`;
@@ -336,6 +342,10 @@ function show_score_and_save_game() {
     shield_counter.innerText = shield_cnt;
     if (stone_cnt == 0 && shield_cnt == 0 && !is_win) {
         is_win = true;
+        black_paper.style.backgroundColor = "black";
+        black_paper.style.paddingTop = `${field['n'] * tile_size / 2 - 50}px`;
+        black_paper.innerText = "🥳🎉🎄🎁🎈🤡🍭🍓🎊🍪";
+        setTimeout(() => {black_paper.style.backgroundColor = "transparent"; black_paper.style.paddingTop = "0px"; black_paper.innerText = "";}, wait_time * 5);
         stone_counter.style.opacity = "0";
         shield_counter.style.opacity = "0";
     } else if (!is_win) {
@@ -345,22 +355,24 @@ function show_score_and_save_game() {
 }
 
 function restart_game() {
-    is_win = false;
-    field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
-    for (var i = 0; i < gems_elms.length; ++i) {
-        for (var j = 0; j < gems_elms[0].length; ++j) {
-            if (shield_elms[i][j] != undefined) {
-                shield_field_div.removeChild(shield_elms[i][j]);
-            }
-            if (gems_elms[i][j] != undefined) {
-                gems_field_div.removeChild(gems_elms[i][j]);
+    if (!edit_mode) {
+        is_win = false;
+        field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
+        for (var i = 0; i < gems_elms.length; ++i) {
+            for (var j = 0; j < gems_elms[0].length; ++j) {
+                if (shield_elms[i][j] != undefined) {
+                    shield_field_div.removeChild(shield_elms[i][j]);
+                }
+                if (gems_elms[i][j] != undefined) {
+                    gems_field_div.removeChild(gems_elms[i][j]);
+                }
             }
         }
+        start_play_game();
     }
-    start_play_game();
 }
 
-function update_buttons() {
+function update_buttons_opacity() {
     if (JSON.parse(localStorage.getItem("last_field")) + 1 < all_fields.length) {
         next_button.style.opacity = "1";
     } else {
@@ -373,20 +385,48 @@ function update_buttons() {
     }
 }
 function next_field() {
-    if (JSON.parse(localStorage.getItem("last_field")) + 1 < all_fields.length) {
-        localStorage.setItem("last_field", JSON.stringify(JSON.parse(localStorage.getItem("last_field")) + 1));
-        field_base = all_fields[JSON.parse(localStorage.getItem("last_field"))];
-        restart_game();
+    if (!edit_mode) {
+        if (JSON.parse(localStorage.getItem("last_field")) + 1 < all_fields.length) {
+            localStorage.setItem("last_field", JSON.stringify(JSON.parse(localStorage.getItem("last_field")) + 1));
+            field_base = all_fields[JSON.parse(localStorage.getItem("last_field"))];
+            restart_game();
+        }
+        update_buttons_opacity();
     }
-    update_buttons();
 }
 function prev_field() {
-    if (JSON.parse(localStorage.getItem("last_field")) - 1 >= 0) {
-        localStorage.setItem("last_field", JSON.stringify(JSON.parse(localStorage.getItem("last_field")) - 1));
-        field_base = all_fields[JSON.parse(localStorage.getItem("last_field"))];
-        restart_game();
+    if (!edit_mode) {
+        if (JSON.parse(localStorage.getItem("last_field")) - 1 >= 0) {
+            localStorage.setItem("last_field", JSON.stringify(JSON.parse(localStorage.getItem("last_field")) - 1));
+            field_base = all_fields[JSON.parse(localStorage.getItem("last_field"))];
+            restart_game();
+        }
+        update_buttons_opacity();
     }
-    update_buttons();
+}
+
+function run_edit_mode() {
+    if (edit_mode) {
+        restart_button.style.opacity = "1";
+        update_buttons_opacity();
+        edit_mode = !edit_mode;
+        edit_button.src = "images/edit_button.png";
+        is_win = false;
+        field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
+        update_all_field();
+        can_play = true;
+    } else {
+        restart_button.style.opacity = "0";
+        next_button.style.opacity = "0";
+        prev_button.style.opacity = "0";
+        edit_mode = !edit_mode;
+        edit_button.src = "images/edit_button_enabled.png";
+        field = field_base;
+        score_div.innerText = "0";
+        score_div.style.fontSize = "50px";
+        update_all_field();
+        can_play = false;
+    }
 }
 
 
@@ -566,7 +606,7 @@ window.addEventListener("touchstart", press_down_mouse);
 window.addEventListener("touchend", press_up_mouse);
 
 
-all_fields = [get_empty_field(8, 8, 4, 2, 10, 10), get_empty_field(6, 6, 5, 1, 1, 10, false), get_empty_field(10, 10, 8, 2, 100, 20)];
+all_fields = [get_empty_field(8, 8, 4, 2, 10, 10), get_empty_field(6, 6, 5, 0, 1, 1, false), get_empty_field(10, 10, 8, 2, 100, 20)];
 if (localStorage.getItem("last_field") == undefined) {
     localStorage.setItem("last_field", "0");
 }
@@ -583,4 +623,4 @@ if (localStorage.getItem("last_game") == undefined) {
     field = JSON.parse(localStorage.getItem("last_game"));
     start_play_game(field);
 }
-update_buttons();
+update_buttons_opacity();

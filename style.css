@@ -10,6 +10,7 @@ div {
 	color: black;
 	text-align: center;
 	user-select: none;
+	font-size: 70px;
 }
 img {
 	position: fixed;
@@ -31,14 +32,18 @@ img {
 	height: 80px;
 }
 #next_button {
-	width: 80px;
-	height: 80px;
+	width: 70px;
+	height: 70px;
 	opacity: 0;
 }
 #prev_button {
-	width: 80px;
-	height: 80px;
+	width: 70px;
+	height: 70px;
 	opacity: 0;
+}
+#edit_button {
+	width: 70px;
+	height: 70px;
 }
 #stone_counter {
 	background-image: url("images/stone.jpg");
