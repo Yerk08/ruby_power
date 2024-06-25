@@ -9,8 +9,10 @@ div {
 	font-weight: bold;
 	color: black;
 	text-align: center;
+	user-select: none;
 }
 img {
 	position: fixed;
 	transition: all 0.3s ease;
+	user-select: none;
 }

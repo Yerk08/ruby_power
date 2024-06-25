@@ -18,7 +18,7 @@ const elms_to_picture = {
 };
 const elms_shield_to_picture = ["images/shield_0.jpg","images/shield_1.jpg","images/shield_2.jpg","images/shield_3.jpg"];
 const wait_time = 300;
-const help_wait_time = 60000;
+const help_wait_time = 30000;
 
 const shield_field_div = document.getElementById("shield_field");
 const shield_field_was_div = document.getElementById("shield_field_was");
@@ -467,7 +467,8 @@ window.addEventListener("touchend", press_up_mouse);
 
 
 field_base = get_empty_field(8, 10, 5, 2, 8, 10);
-for (var i = 0; i < field_base["m"]; ++i) {
+for (var i = 3; i < field_base["m"] - 3; ++i) {
     field_base["gems_field"][3][i] = "empty";
+    field_base["gems_field"][4][i] = "empty";
 }
 start_play_game(field_base);
