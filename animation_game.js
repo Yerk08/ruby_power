@@ -406,12 +406,16 @@ function restart_game() {
         is_win = false;
         field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
         for (var i = 0; i < gems_elms.length; ++i) {
-            for (var j = 0; j < gems_elms[0].length; ++j) {
-                if (shield_elms[i][j] != undefined) {
-                    shield_field_div.removeChild(shield_elms[i][j]);
-                }
+            for (var j = 0; j < gems_elms[i].length; ++j) {
                 if (gems_elms[i][j] != undefined) {
                     gems_field_div.removeChild(gems_elms[i][j]);
+                }
+            }
+        }
+        for (var i = 0; i < shield_elms.length; ++i) {
+            for (var j = 0; j < shield_elms[i].length; ++j) {
+                if (shield_elms[i][j] != undefined) {
+                    shield_field_div.removeChild(shield_elms[i][j]);
                 }
             }
         }
@@ -468,8 +472,7 @@ function run_edit_mode() {
         localStorage.setItem("all_fields", JSON.stringify(all_fields));
         field_base = field;
         field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
-        show_score_and_save_game();
-        update_all_field();
+        restart_game();
         can_play = true;
     } else {
         selected_edit = "";
@@ -630,7 +633,113 @@ function edit_selecting(name) {
 
 function generate_primitive_fields() {
     all_fields = [];
-    all_fields.push(get_empty_field(8, 8, 4, 0, 1, 5, false));
+    var x;
+    x = get_empty_field(8, 8, 4, 0, 1, 5, false);
+    all_fields.push(x);
+    x = get_empty_field(8, 10, 4, 1, 4, 10, false);
+    all_fields.push(x);
+    x = get_empty_field(9, 9, 4, 2, 0, 10, false);
+    x["gems_field"] = [
+        ["empty", "bomb", "gem", "bomb", "gem", "bomb", "gem", "bomb", "empty"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["gem", "gem", "empty", "empty", "empty", "empty", "empty", "gem", "gem"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["gem", "gem", "gem", "empty", "empty", "empty", "gem", "gem", "gem"],
+        ["gem", "gem", "gem", "empty", "empty", "empty", "gem", "gem", "gem"],
+        ["gem", "gem", "gem", "empty", "empty", "empty", "gem", "gem", "gem"]
+    ];
+    all_fields.push(x);
+    x = get_empty_field(7, 7, 5, 1, 3, 15, false);
+    x["gems_field"] = [
+        ["empty", "empty", "gem", "gem", "gem", "empty", "empty"],
+        ["gem", "empty", "gem", "gem", "gem", "empty", "gem"],
+        ["gem", "empty", "gem", "gem", "gem", "empty", "gem"],
+        ["gem", "empty", "gem", "gem", "gem", "empty", "gem"],
+        ["gem", "empty", "gem", "gem", "gem", "empty", "gem"],
+        ["gem", "empty", "gem", "gem", "gem", "empty", "gem"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem"]
+    ];
+    all_fields.push(x);
+    x = get_empty_field(7, 8, 5, 2, 8, 10, false);
+    x["gems_field"] = [
+        ["empty", "gem", "gem", "empty", "empty", "gem", "gem", "empty"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["empty", "gem", "gem", "gem", "gem", "gem", "gem", "empty"],
+        ["empty", "empty", "gem", "gem", "gem", "gem", "empty", "empty"],
+        ["empty", "empty", "empty", "gem", "gem", "empty", "empty", "empty"]
+    ];
+    all_fields.push(x);
+    x = get_empty_field(7, 7, 4, 2, 5, 10, true);
+    x["gems_field"] = [
+        ["empty", "empty", "gem", "gem", "gem", "gem", "empty"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "empty"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["empty", "gem", "gem", "gem", "gem", "gem", "gem"],
+        ["empty", "gem", "gem", "gem", "gem", "empty", "empty"]
+    ];
+    all_fields.push(x);
+    x = get_empty_field(8, 8, 5, 3, 10, 15, true);
+    for (var i = 0; i < 4; ++i) {
+        x["gems_field"][i + 2][3] = "empty";
+        x["gems_field"][i + 2][4] = "empty";
+    }
+    all_fields.push(x);
+    x = get_empty_field(8, 8, 5, 3, 0, 10, true);
+    for (var i = 0; i < 8; ++i) {
+        for (var j = 0; j < 8; ++j) {
+            if ((i + j) % 4 == 0) {
+                x["gems_field"][i][j] = "stone";
+            }
+        }
+    }
+    all_fields.push(x);
+    x = get_empty_field(10, 10, 5, 0, 10, 15, true);
+    for (var i = 0; i < 10; ++i) {
+        for (var j = 0; j < 10; ++j) {
+            var y = Math.min(i, j, 9 - i, 9 - j);
+            if (y == 4) {
+                x["gems_field"][i][j] = "stone";
+                x["shield_field"][i][j] = 3;
+            } else {
+                x["shield_field"][i][j] = y;
+            }
+        }
+    }
+    all_fields.push(x);
+    x = get_empty_field(9, 9, 4, 3, 30, 15, true);
+    all_fields.push(x);
+    x = get_empty_field(8, 8, 8, 3, 6, 40, true);
+    all_fields.push(x);
+    x = get_empty_field(11, 11, 5, 2, 10, 20, true);
+    for (var i = 0; i < 3; ++i) {
+        for (var j = 0; j < 3; ++j) {
+            x["gems_field"][i + 4][j] = "empty";
+            x["gems_field"][i][j + 4] = "empty";
+            x["gems_field"][i + 8][j + 4] = "empty";
+            x["gems_field"][i + 4][j + 8] = "empty";
+        }
+    }
+    x["gems_field"][5][5] = "empty";
+    all_fields.push(x);
+    x = get_empty_field(9, 9, 7, 2, 10, 20, true);
+    for (var i = 0; i < 5; ++i) {
+        for (var j = 0; j < 5; ++j) {
+            if (1 <= i && i <= 3 && 1 <= j && j <= 3) {
+                x["gems_field"][i + 2][j + 2] = "empty";
+            } else if ((i + j) % 2 == 0) {
+                x["gems_field"][i + 2][j + 2] = "empty";
+            }
+        }
+    }
+    all_fields.push(x);
+    x = get_empty_field(8, 8, 8, 3, 60, 10, true);
+    all_fields.push(x);
     localStorage.setItem("all_fields", JSON.stringify(all_fields));
 }
 
