@@ -460,7 +460,6 @@ function run_edit_mode() {
     if (edit_mode) {
         restart_button.style.opacity = "1";
         update_buttons_opacity();
-        edit_mode = !edit_mode;
         edit_button.src = "images/edit_button.png";
         const ar = document.getElementsByClassName("edit_buttons_field_img");
         for (var i = 0; i < ar.length; ++i) {
@@ -474,12 +473,12 @@ function run_edit_mode() {
         field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
         restart_game();
         can_play = true;
+        edit_mode = !edit_mode;
     } else {
         selected_edit = "";
         restart_button.style.opacity = "0";
         next_button.style.opacity = "0";
         prev_button.style.opacity = "0";
-        edit_mode = !edit_mode;
         edit_button.src = "images/edit_button_enabled.png";
         const ar = document.getElementsByClassName("edit_buttons_field_img");
         for (var i = 0; i < ar.length; ++i) {
@@ -487,7 +486,7 @@ function run_edit_mode() {
             ar[i].style.width = `${Math.min(window.innerHeight, window.innerWidth) / 6}px`;
             ar[i].style.height = `${Math.min(window.innerHeight, window.innerWidth) / 6}px`;
         };
-        field = all_fields[JSON.parse(localStorage.getItem("last_field"))];
+        field = field_base;
         score_div.innerText = "edit";
         score_div.style.fontSize = "50px";
         update_all_field();
@@ -503,6 +502,7 @@ function run_edit_mode() {
             edit_buttons_field.style.left = "90px";
         }
         can_play = false;
+        edit_mode = !edit_mode;
     }
 }
 
