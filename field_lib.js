@@ -164,27 +164,15 @@ function update_field_from_impossible_to_playable(field, tryies = -1) {
         return field;
     }
     field = JSON.parse(JSON.stringify(field));
-    var ct = undefined;
     for (var t = 0; t < tryies || tryies == -1; ++t) {
-        if (ct == undefined || ct["field"] == undefined) {
-            for (var i = 0; i < field["n"]; ++i) {
-                for (var j = 0; j < field["m"]; ++j) {
-                    if ((typeof(field["gems_field"][i][j]) == "number" || field["gems_field"][i][j] == "gem") && field["gems_field"][i][j] != -1) {
-                        field["gems_field"][i][j] = Math.floor(Math.random() * field["gems_number"]) % field["gems_number"];
-                    }
-                }
-            }
-        } else {
-            for (var i = 0; i < field["n"]; ++i) {
-                for (var j = 0; j < field["m"]; ++j) {
-                    if ((typeof(field["gems_field"][i][j]) == "number" || field["gems_field"][i][j] == "gem") && field["gems_field"][i][j] != -1 && ct["field"][i][j]) {
-                        field["gems_field"][i][j] = Math.floor(Math.random() * field["gems_number"]) % field["gems_number"];
-                    }
+        for (var i = 0; i < field["n"]; ++i) {
+            for (var j = 0; j < field["m"]; ++j) {
+                if ((typeof(field["gems_field"][i][j]) == "number" || field["gems_field"][i][j] == "gem") && field["gems_field"][i][j] != -1) {
+                    field["gems_field"][i][j] = Math.floor(Math.random() * field["gems_number"]) % field["gems_number"];
                 }
             }
         }
-        ct = _count_triple_field(field);
-        var is_good = ct["triple_flag"];
+        var is_good = _count_triple_field(field)["triple_flag"];
         if (is_good == 0) {
             return field;
         }
