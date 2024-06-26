@@ -487,7 +487,7 @@ function run_edit_mode() {
             ar[i].style.width = `${Math.min(window.innerHeight, window.innerWidth) / 6}px`;
             ar[i].style.height = `${Math.min(window.innerHeight, window.innerWidth) / 6}px`;
         };
-        field = field_base;
+        field = all_fields[JSON.parse(localStorage.getItem("last_field"))];
         score_div.innerText = "edit";
         score_div.style.fontSize = "50px";
         update_all_field();
