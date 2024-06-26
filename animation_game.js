@@ -67,6 +67,8 @@ function _review_field() {
     if (margin_top == 0) {
         restart_button.style.top = "70px";
         restart_button.style.left = "35px";
+        restart_button.style.width = "80px";
+        restart_button.style.height = "80px";
         stone_counter.style.top = "150px";
         stone_counter.style.left = "40px";
         shield_counter.style.top = "230px";
@@ -95,17 +97,19 @@ function _review_field() {
         right_paper.style.backgroundColor = "black";
         animation_field_div.appendChild(right_paper);
     } else {
-        restart_button.style.top = "-5px";
+        restart_button.style.top = "0px";
         restart_button.style.left = "140px";
+        restart_button.style.width = "70px";
+        restart_button.style.height = "70px";
         stone_counter.style.top = "0px";
-        stone_counter.style.left = "225px";
+        stone_counter.style.left = "215px";
         shield_counter.style.top = "0px";
-        shield_counter.style.left = "300px";
-        edit_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+        shield_counter.style.left = "290px";
+        edit_button.style.top = `${field['n'] * tile_size + margin_top + 20}px`;
         edit_button.style.left = "10px";
-        next_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+        next_button.style.top = `${field['n'] * tile_size + margin_top + 20}px`;
         next_button.style.left = "90px";
-        prev_button.style.top = `${field['n'] * tile_size + margin_top + 10}px`;
+        prev_button.style.top = `${field['n'] * tile_size + margin_top + 20}px`;
         prev_button.style.left = "170px";
         help_button.style.top = `${field['n'] * tile_size + margin_top + 90}px`;
         help_button.style.left = "10px";
@@ -217,7 +221,7 @@ function update_all_field() {
             margin_left = 150;
             tile_size = Math.min(window.innerHeight / field["n"], (window.innerWidth - margin_left) / field["m"]);
         } else {
-            margin_top = 70;
+            margin_top = 80;
             tile_size = Math.min((window.innerHeight - margin_top) / field["n"], window.innerWidth / field["m"]);
         }
         _review_field();
