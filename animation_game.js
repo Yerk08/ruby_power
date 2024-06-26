@@ -401,8 +401,8 @@ function show_score_and_save_game() {
     }
 }
 
-function restart_game() {
-    if (!edit_mode) {
+function restart_game(is_in_edit_mode = false) {
+    if (!edit_mode || is_in_edit_mode) {
         is_win = false;
         field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
         for (var i = 0; i < gems_elms.length; ++i) {
@@ -470,8 +470,7 @@ function run_edit_mode() {
         all_fields[JSON.parse(localStorage.getItem("last_field"))] = field;
         localStorage.setItem("all_fields", JSON.stringify(all_fields));
         field_base = field;
-        field = update_field_from_impossible_to_playable(run_field(field_base), field_base["n"] * field_base["m"] * 20);
-        restart_game();
+        restart_game(is_in_edit_mode = true);
         can_play = true;
         edit_mode = !edit_mode;
     } else {
