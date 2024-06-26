@@ -534,7 +534,7 @@ function after_move() {
         show_score_and_save_game();
         setTimeout(() => after_move(), wait_time * 2);
     } else if (ct["triple_flag"] == -1) {
-        if (was_bad) {
+        if (!was_bad) {
             was_bad = true;
             field = update_field_from_impossible_to_playable(field, field["n"] * field["m"] * 20);
             update_all_field();
