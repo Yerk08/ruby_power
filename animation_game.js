@@ -638,6 +638,8 @@ function generate_primitive_fields() {
     all_fields.push(x);
     x = get_empty_field(8, 10, 4, 1, 4, 10, false);
     all_fields.push(x);
+    x = get_empty_field(10, 8, 4, 1, 4, 10, false);
+    all_fields.push(x);
     x = get_empty_field(9, 9, 4, 2, 0, 10, false);
     x["gems_field"] = [
         ["empty", "bomb", "gem", "bomb", "gem", "bomb", "gem", "bomb", "empty"],
@@ -658,7 +660,7 @@ function generate_primitive_fields() {
         ["gem", "empty", "gem", "gem", "gem", "empty", "gem"],
         ["gem", "empty", "gem", "gem", "gem", "empty", "gem"],
         ["gem", "empty", "gem", "gem", "gem", "empty", "gem"],
-        ["gem", "empty", "gem", "gem", "gem", "empty", "gem"],
+        ["gem", "gem", "gem", "gem", "gem", "gem", "gem"],
         ["gem", "gem", "gem", "gem", "gem", "gem", "gem"]
     ];
     all_fields.push(x);
