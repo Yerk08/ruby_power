@@ -837,9 +837,9 @@ function press_up_mouse(event) {
         is_touch_pad = true;
         var pos = [Math.floor((event.changedTouches[0].pageY - margin_top) / tile_size), Math.floor((event.changedTouches[0].pageX - margin_left) / tile_size)];
     }
-    if (0 <= pos[0] && pos[0] < field["n"] && 0 <= pos[1] && pos[1] < field["m"] && can_play) {
+    if (can_play) {
         if (last_click[0] != -1 && (last_click[0] != pos[0] || last_click[1] != pos[1])) {
-            if (last_click[0] == -1) {
+            if (0 <= pos[0] && pos[0] < field["n"] && 0 <= pos[1] && pos[1] < field["m"] && last_click[0] == -1) {
                 if (typeof(field["gems_field"][pos[0]][pos[1]]) == "number" || field["gems_field"][pos[0]][pos[1]] == "bonus_1" || field["gems_field"][pos[0]][pos[1]] == "bonus_2" || field["gems_field"][pos[0]][pos[1]] == "bonus_3") {
                     last_click = pos;
                     gems_elms[pos[0]][pos[1]].style.transform = "scale(2.0)";
