@@ -692,6 +692,23 @@ function generate_primitive_fields() {
         ["empty", "gem", "gem", "gem", "gem", "empty", "empty"]
     ];
     all_fields.push(x);
+    x = get_empty_field(8, 8, 4, 2, 12, 10, true);
+    for (var i = 0; i < 8; ++i) {
+        for (var j = 0; j < 8; ++j) {
+            if (Math.min(j, 7 - j) < (8 - i) / 2 - 1) {
+                x["gems_field"][i][j] = "empty";
+            }
+        }
+    }
+    all_fields.push(x);
+    x = get_empty_field(8, 8, 7, 2, 16, 10, true);
+    for (var i = 0; i < 2; ++i) {
+        for (var j = 0; j < 2; ++j) {
+ 			x["gems_field"][2 + i * 3][j] = "empty";
+ 			x["gems_field"][2 + i * 3][7 - j] = "empty";
+		}
+	}
+    all_fields.push(x);
     x = get_empty_field(8, 8, 5, 3, 10, 15, true);
     for (var i = 0; i < 4; ++i) {
         x["gems_field"][i + 2][3] = "empty";
@@ -747,6 +764,32 @@ function generate_primitive_fields() {
     }
     all_fields.push(x);
     x = get_empty_field(8, 8, 8, 3, 60, 10, true);
+    all_fields.push(x);
+    x = get_empty_field(10, 10, 6, 2, 16, 10, true);
+	x["gems_field"] = [
+		["empty", "empty", "empty", "gem", "gem", "gem", "gem", "empty", "empty", "empty"],
+		["empty", "empty", "gem", "gem", "gem", "gem", "gem", "gem", "empty", "empty"],
+		["empty", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "empty"],
+		["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+		["empty", "gem", "gem", "empty", "gem", "gem", "empty", "gem", "gem", "empty"],
+		["empty", "gem", "gem", "empty", "gem", "gem", "empty", "gem", "gem", "empty"],
+		["empty", "gem", "gem", "empty", "gem", "gem", "empty", "gem", "gem", "empty"],
+		["empty", "gem", "gem", "empty", "gem", "gem", "empty", "gem", "gem", "empty"],
+		["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"],
+		["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"]
+	];
+    all_fields.push(x);
+    x = get_empty_field(8, 8, 6, 2, 16, 20, true);
+	x["gems_field"] = [
+		[-1, "gem", "gem", "gem", "gem", "gem", "gem", -1],
+		["gem", "bomb", "gem", "gem", "gem", "gem", "bomb", "gem"],
+		["gem", "gem", "bomb", "gem", "gem", "bomb", "gem", "gem"],
+		["gem", "gem", "gem", "bomb", "bomb", "gem", "gem", "gem"],
+		["gem", "gem", "gem", "bomb", "bomb", "gem", "gem", "gem"],
+		["gem", "gem", "bomb", "gem", "gem", "bomb", "gem", "gem"],
+		[-1, "bomb", "gem", "gem", "gem", "gem", "bomb", -1],
+		["gem", "gem", "gem", "gem", "gem", "gem", "gem", "gem"]
+	];
     all_fields.push(x);
     localStorage.setItem("all_fields", JSON.stringify(all_fields));
 }
