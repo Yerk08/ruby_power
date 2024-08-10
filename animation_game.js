@@ -855,9 +855,9 @@ function press_down_mouse(event) {
                 last_click = [-1, -1];
             }
         } else {
-            if (pos[0] > last_click[0]) {
+            if (pos[0] > last_click[0] && Math.abs(pos[0] - last_click[0]) >= Math.abs(pos[1] - last_click[1])) {
                 pos = [last_click[0] + 1, last_click[1]];
-            } else if (pos[0] < last_click[0]) {
+            } else if (pos[0] < last_click[0] && Math.abs(pos[0] - last_click[0]) >= Math.abs(pos[1] - last_click[1])) {
                 pos = [last_click[0] - 1, last_click[1]];
             } else if (pos[1] > last_click[1]) {
                 pos = [last_click[0], last_click[1] + 1];
@@ -890,9 +890,9 @@ function press_up_mouse(event) {
                     last_click = [-1, -1];
                 }
             } else {
-                if (pos[0] > last_click[0]) {
+                if (pos[0] > last_click[0] && Math.abs(pos[0] - last_click[0]) >= Math.abs(pos[1] - last_click[1])) {
                     pos = [last_click[0] + 1, last_click[1]];
-                } else if (pos[0] < last_click[0]) {
+                } else if (pos[0] < last_click[0] && Math.abs(pos[0] - last_click[0]) >= Math.abs(pos[1] - last_click[1])) {
                     pos = [last_click[0] - 1, last_click[1]];
                 } else if (pos[1] > last_click[1]) {
                     pos = [last_click[0], last_click[1] + 1];
