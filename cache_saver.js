@@ -2,10 +2,9 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("cache_saver.js");
 }
 
-const cacheName = "ruby_power_cache-v1.3";
+const cacheName = "ruby_power_cache-v1.91";
 const appShellFiles = [
   "index.html",
-  "cache_saver.js",
   "animation_game.js",
   "field_lib.js",
   "style.css",
@@ -48,12 +47,21 @@ const appShellFiles = [
   "images/help/help_image_5.png"
 ];
 
+caches.keys().then((thiscacheNames) =>
+	Promise.all(
+		thiscacheNames.map((thiscacheName) => {
+			if (cacheName != thiscacheName) {
+				return caches.delete(thiscacheName);
+			}
+		}),
+	),
+)
+
 self.addEventListener("install", (event) => {
   console.log("[Service Worker] Install");
   event.waitUntil(
     (async () => {
       const cache = await caches.open(cacheName);
-      console.log("[Service Worker] Caching all: app shell and content");
       await cache.addAll(appShellFiles);
     })()
   );
@@ -63,13 +71,11 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       (async () => {
         const r = await caches.match(event.request);
-        console.log(`[Service Worker] Fetching resource: ${event.request.url}`);
         if (r) {
           return r;
         }
         const response = await fetch(event.request);
         const cache = await caches.open(cacheName);
-        console.log(`[Service Worker] Caching new resource: ${event.request.url}`);
         cache.put(event.request, response.clone());
         return response;
     })()
