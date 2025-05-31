@@ -1,4 +1,4 @@
-var score_rules = {"move": 0, "pop_shield": 20, "stone_fall": 200, "bomb_fall": 300, "bomb_boom": -7000, "bonus_1": 150, "bonus_2": 300, "bonus_3": 800, "ruby_get": 5000, "ruby_fall": -5000, "ruby_break": 60000}; // bonus_1 - for 4 connected, removes available 3x3; bonus_2 - for 5 connected, removes available row and column; bonus_3 - for 3000+ score - removes some cells with gems; ruby - for 6-7 connected, like a stone can fall and can destroy like a gems; ruby has -1 number;
+var score_rules = {"move": 0, "pop_shield": 20, "stone_fall": 200, "bomb_fall": 300, "bomb_boom": -27000, "bonus_1": 150, "bonus_2": 300, "bonus_3": 800, "ruby_get": 5000, "ruby_fall": -5000, "ruby_break": 60000}; // bonus_1 - for 4 connected, removes available 3x3; bonus_2 - for 5 connected, removes available row and column; bonus_3 - for 3000+ score - removes some cells with gems; ruby - for 6-7 connected, like a stone can fall and can destroy like a gems; ruby has -1 number;
 function get_empty_field(n, m, gems_number = 4, shield_number = 0, stones_number = 1, stones_random = 5, has_bombs = true) {
     var field = [];
     var shield = [];
