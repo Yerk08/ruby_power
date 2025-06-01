@@ -2,7 +2,7 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("cache_saver.js");
 }
 
-const cacheName = "ruby_power_cache-v1.94";
+const cacheName = "ruby_power_cache-v1.96";
 const appShellFiles = [
   "index.html",
   "animation_game.js",
@@ -44,7 +44,9 @@ const appShellFiles = [
   "images/help/help_image_2.png",
   "images/help/help_image_3.png",
   "images/help/help_image_4.png",
-  "images/help/help_image_5.png"
+  "images/help/help_image_5.png",
+
+	"manifest.html"
 ];
 
 caches.keys().then((thiscacheNames) =>
