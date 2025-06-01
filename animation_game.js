@@ -617,9 +617,9 @@ addEventListener("resize", update_all_field);
 function edit_add_new() {
     if (edit_mode) {
         var sz = Math.max(Math.floor(Math.random() * 12), 8);
-        var gems = (Math.floor(Math.random() * 6)) % 5 + 4;
-        var stones = (Math.floor(Math.random() * 4) + 1) * 4;
-        all_fields.push(get_empty_field(sz, sz, gems, Math.floor(Math.random() * 3) % 3, stones, 15, true));
+        var gems = 5;
+        var stones = (Math.floor(Math.random() * 4) + 3) * 5;
+        all_fields.push(get_empty_field(sz, sz, gems, 3, stones, 15, true));
         run_edit_mode();
     }
 }
@@ -737,7 +737,7 @@ function generate_primitive_fields() {
         }
     }
     all_fields.push(x);
-    x = get_empty_field(9, 9, 4, 3, 30, 15, true);
+    x = get_empty_field(9, 9, 4, 3, 120, 15, true);
     all_fields.push(x);
     x = get_empty_field(8, 8, 8, 3, 6, 40, true);
     all_fields.push(x);
