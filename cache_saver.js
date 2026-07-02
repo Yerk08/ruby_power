@@ -41,7 +41,8 @@ const appShellFiles = [
   `${REPO_NAME}/images/help/help_image_3.png`,
   `${REPO_NAME}/images/help/help_image_4.png`,
   `${REPO_NAME}/images/help/help_image_5.png`,
-  `${REPO_NAME}/manifest.json` 
+  `${REPO_NAME}/manifest.json`,
+  `${REPO_NAME}/icon.png`
 ];
 
 // Событие установки: кэшируем файлы
