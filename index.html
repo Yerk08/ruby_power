@@ -34,6 +34,20 @@
 			<img src="images/bonus_2.png" class="edit_buttons_field_img bonus_2" onclick="edit_selecting('bonus_2')"></img>
 			<img src="images/bonus_3.png" class="edit_buttons_field_img bonus_3" onclick="edit_selecting('bonus_3')"></img>
 		</div>
+
+		<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/ruby_power/cache_saver.js', { scope: '/ruby_power/' })
+      .then((reg) => {
+        console.log('[App] Service Worker успешно зарегистрирован. Scope:', reg.scope);
+      })
+      .catch((err) => {
+        console.error('[App] КРИТИЧЕСКАЯ ОШИБКА РЕГИСТРАЦИИ:', err);
+      });
+  });
+}
+		</script>
 	</body>
 	<script src="animation_game.js"></script>
 </html>
