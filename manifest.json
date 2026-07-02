@@ -3,13 +3,13 @@
  "name": "Сила Рубина - игра 3 в ряд",
  "icons": [
        {
-     "src":"/rubypower/icon.png",
+     "src":"/ruby_power/icon.png",
      "sizes": "96x96",
      "type": "image/png"
    }
  ],
 
- "start_url": "/rubypower/",
+ "start_url": "/ruby_power/",
  "orientation": "natural",
  "background_color": "#DC143C",
  "theme_color": "#DC143C",
