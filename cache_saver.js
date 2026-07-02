@@ -1,11 +1,19 @@
 // Регистрация Service Worker с учетом подпапки репозитория GitHub Pages
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/ruby_power/cache_saver.js')
-      .then((reg) => console.log('[App] Service Worker успешно зарегистрирован для области:', reg.scope))
-      .catch((err) => console.error('[App] Ошибка регистрации Service Worker:', err));
+    // Явно задаем scope, чтобы Service Worker имел доступ ко всему репозиторию
+    navigator.serviceWorker.register('/ruby_power/cache_saver.js', { scope: '/ruby_power/' })
+      .then((reg) => {
+        console.log('[App] Service Worker успешно зарегистрирован. Scope:', reg.scope);
+      })
+      .catch((err) => {
+        // Этот блок выведет детальную причину исключения в консоль
+        console.error('[App] КРИТИЧЕСКАЯ ОШИБКА РЕГИСТРАЦИИ:');
+        console.dir(err); 
+      });
   });
 }
+
 
 const cacheName = 'ruby_power_cache-v1.97';
 const REPO_NAME = '/ruby_power';
