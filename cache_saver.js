@@ -1,4 +1,4 @@
-const cacheName = 'ruby_power_cache-v1.97';
+const cacheName = 'ruby_power_cache-v1.98';
 const REPO_NAME = '/ruby_power';
 
 // Массив путей, адаптированный под GitHub Pages
@@ -41,7 +41,7 @@ const appShellFiles = [
   `${REPO_NAME}/images/help/help_image_3.png`,
   `${REPO_NAME}/images/help/help_image_4.png`,
   `${REPO_NAME}/images/help/help_image_5.png`,
-  `${REPO_NAME}/manifest.html` 
+  `${REPO_NAME}/manifest.json` 
 ];
 
 // Событие установки: кэшируем файлы
