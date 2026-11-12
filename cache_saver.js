@@ -1,4 +1,4 @@
-const cacheName = 'ruby_power_cache-v1.98';
+const cacheName = 'ruby_power_cache-v1.99';
 const REPO_NAME = '/ruby_power';
 
 // Массив путей, адаптированный под GitHub Pages
